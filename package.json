@@ -1,0 +1,28 @@
+{
+  "name": "pinnacle-stride",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PinnacleStride — Product-building technology startup delivering custom digital solutions",
+  "author": "PinnacleStride Team",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter api dev",
+    "build:web": "pnpm --filter web build",
+    "build:api": "pnpm --filter api build",
+    "build": "pnpm --filter web build",
+    "typecheck": "pnpm -r --stream typecheck",
+    "lint": "pnpm --filter web lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "db:migrate": "pnpm --filter api db:migrate",
+    "db:seed": "pnpm --filter api db:seed"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
+}

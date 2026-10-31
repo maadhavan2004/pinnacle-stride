@@ -1,0 +1,378 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum PublishStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ServiceType {
+  BUSINESS_WEBSITE
+  FULL_STACK_APP
+  AI_ML
+  GENAI_AGENTIC
+  OTHER_CONSULTATION
+}
+
+enum BudgetRange {
+  UNDER_25K
+  RANGE_25K_75K
+  RANGE_75K_2L
+  ABOVE_2L
+  NOT_SURE
+}
+
+enum TimelineOption {
+  TWO_TO_FOUR_WEEKS
+  ONE_TO_THREE_MONTHS
+  FLEXIBLE
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  WON
+  LOST
+  SPAM
+}
+
+enum ProductStatus {
+  COMING_SOON
+  IN_DEVELOPMENT
+  BETA
+  LIVE
+}
+
+enum ProjectType {
+  INDEPENDENT_PRODUCT
+  INTERNAL_PORTFOLIO
+  PAID_CLIENT_WORK
+}
+
+enum ProjectCategory {
+  BUSINESS_WEBSITE
+  FULL_STACK_APP
+  AI_ML
+  GENAI_AGENTIC
+  DATA_SCIENCE
+  EXPERIMENTAL
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String
+  displayName  String
+  role         UserRole    @default(VIEWER)
+  isActive     Boolean     @default(true)
+  failedLogins Int         @default(0)
+  lockedUntil  DateTime?
+  lastLoginAt  DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @default(now()) @updatedAt
+
+  refreshTokens    RefreshToken[]
+  twoFactorSecrets TwoFactorSecret?
+  inquiryNotes     InquiryNote[]
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+model TwoFactorSecret {
+  userId        String   @id
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secretEnc     String
+  recoveryCodes String[] @default([])
+  confirmedAt   DateTime?
+
+  @@map("two_factor_secrets")
+}
+
+model RefreshToken {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyId   String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  userAgent  String?
+  ipHash     String?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@index([familyId])
+  @@map("refresh_tokens")
+}
+
+model MediaAsset {
+  id         String   @id @default(uuid())
+  objectKey  String   @unique
+  mimeType   String
+  width      Int?
+  height     Int?
+  sizeBytes  BigInt
+  altText    String   @default("")
+  variants   Json     @default("[]")
+  uploadedBy String?
+  createdAt  DateTime @default(now())
+
+  @@map("media_assets")
+}
+
+model TechnologyCategory {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  sortOrder    Int          @default(0)
+  technologies Technology[]
+
+  @@map("technology_categories")
+}
+
+model Technology {
+  id          String             @id @default(uuid())
+  categoryId  String
+  category    TechnologyCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  name        String             @unique
+  iconKey     String?
+  isPublished Boolean            @default(true)
+  sortOrder   Int                @default(0)
+
+  projects ProjectTechnology[]
+  products ProductTechnology[]
+
+  @@index([categoryId, sortOrder])
+  @@map("technologies")
+}
+
+model Service {
+  id             String        @id @default(uuid())
+  slug           String        @unique
+  title          String
+  summary        String
+  whatWeBuild    Json          @default("[]")
+  problemSolved  String
+  serviceType    ServiceType?
+  seoTitle       String?
+  seoDescription String?
+  status         PublishStatus @default(PUBLISHED)
+  sortOrder      Int           @default(0)
+  updatedAt      DateTime      @default(now()) @updatedAt
+
+  @@map("services")
+}
+
+model Product {
+  id             String              @id @default(uuid())
+  slug           String              @unique
+  name           String
+  tagline        String?
+  problem        String
+  targetUsers    String?
+  features       Json                @default("[]")
+  roadmap        Json                @default("[]")
+  bodyMd         String?
+  productStatus  ProductStatus       @default(COMING_SOON)
+  logoId         String?
+  coverId        String?
+  externalUrl    String?
+  demoUrl        String?
+  isFeatured     Boolean             @default(false)
+  status         PublishStatus       @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @default(now()) @updatedAt
+  technologies   ProductTechnology[]
+
+  @@index([productStatus, publishedAt(sort: Desc)])
+  @@map("products")
+}
+
+model Project {
+  id             String              @id @default(uuid())
+  slug           String              @unique
+  title          String
+  summary        String
+  projectType    ProjectType
+  category       ProjectCategory
+  overview       String
+  problem        String
+  solution       String
+  features       Json                @default("[]")
+  contribution   String
+  results        String?
+  clientName     String?
+  liveUrl        String?
+  repoUrl        String?
+  coverId        String?
+  gallery        Json                @default("[]")
+  isFeatured     Boolean             @default(false)
+  sortOrder      Int                 @default(0)
+  status         PublishStatus       @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @default(now()) @updatedAt
+  technologies   ProjectTechnology[]
+
+  @@index([category, sortOrder, publishedAt(sort: Desc)])
+  @@index([sortOrder])
+  @@map("projects")
+}
+
+model ProjectTechnology {
+  projectId    String
+  technologyId String
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technology   Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, technologyId])
+  @@map("project_technologies")
+}
+
+model ProductTechnology {
+  productId    String
+  technologyId String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  technology   Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@id([productId, technologyId])
+  @@map("product_technologies")
+}
+
+model TeamMember {
+  id          String   @id @default(uuid())
+  fullName    String
+  roleTitle   String
+  bio         String
+  interests   String[] @default([])
+  photoId     String?
+  links       Json     @default("{}")
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(true)
+
+  @@map("team_members")
+}
+
+model Faq {
+  id          String  @id @default(uuid())
+  topic       String
+  question    String
+  answerMd    String
+  sortOrder   Int     @default(0)
+  isPublished Boolean @default(true)
+
+  @@map("faqs")
+}
+
+model LegalDocument {
+  id            String   @id @default(uuid())
+  kind          String
+  version       String
+  bodyMd        String
+  effectiveFrom DateTime
+
+  @@unique([kind, version])
+  @@map("legal_documents")
+}
+
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedBy String?
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("site_settings")
+}
+
+model Inquiry {
+  id          String         @id @default(uuid())
+  fullName    String
+  email       String
+  company     String?
+  serviceType ServiceType
+  budget      BudgetRange    @default(NOT_SURE)
+  timeline    TimelineOption @default(FLEXIBLE)
+  message     String
+  status      InquiryStatus  @default(NEW)
+  sourcePage  String?
+  utm         Json?
+  ipHash      String?
+  userAgent   String?
+  spamScore   Int            @default(0)
+  assignedTo  String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now()) @updatedAt
+  deletedAt   DateTime?
+
+  notes         InquiryNote[]
+  consentRecord ConsentRecord?
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([serviceType, createdAt(sort: Desc)])
+  @@index([email])
+  @@map("inquiries")
+}
+
+model InquiryNote {
+  id        String   @id @default(uuid())
+  inquiryId String
+  inquiry   Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([inquiryId, createdAt])
+  @@map("inquiry_notes")
+}
+
+model ConsentRecord {
+  id            String    @id @default(uuid())
+  inquiryId     String?   @unique
+  inquiry       Inquiry?  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  subscriberId  String?
+  ideaId        String?
+  purpose       String
+  policyVersion String
+  grantedAt     DateTime  @default(now())
+  ipHash        String?
+
+  @@map("consent_records")
+}
+
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  ipHash     String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt(sort: Desc)])
+  @@index([actorId, createdAt(sort: Desc)])
+  @@map("audit_logs")
+}
