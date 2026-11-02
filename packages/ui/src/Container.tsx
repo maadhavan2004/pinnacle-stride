@@ -12,9 +12,9 @@ export const Container: React.FC<ContainerProps> = ({
   ...props
 }) => {
   const maxSizes = {
-    narrow: 'max-w-4xl',
-    default: 'max-w-[1200px]',
-    wide: 'max-w-[1400px]',
+    narrow: 'max-w-3xl',
+    default: 'max-w-[1140px]',
+    wide: 'max-w-[1280px]',
   };
 
   return (
@@ -49,21 +49,21 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
   return (
     <div
       className={cn(
-        'max-w-3xl mb-12 sm:mb-16',
-        align === 'center' ? 'mx-auto text-center' : 'text-left',
+        'mb-10 sm:mb-14',
+        align === 'center' ? 'mx-auto text-center max-w-2xl' : 'text-left max-w-2xl',
         className
       )}
     >
       {eyebrow && (
-        <span className="inline-block text-xs sm:text-sm font-mono uppercase tracking-wider text-[#0EA5A4] dark:text-[#2DD4BF] font-semibold mb-3">
+        <span className="inline-block text-[11px] font-mono uppercase tracking-wider text-primary font-semibold mb-2">
           {eyebrow}
         </span>
       )}
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[#0A1128] dark:text-[#F4F7FB] leading-tight">
+      <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text leading-snug">
         {title}
       </h2>
       {description && (
-        <p className="mt-4 text-base sm:text-lg text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
+        <p className="mt-2.5 text-xs sm:text-sm text-text-muted leading-relaxed">
           {description}
         </p>
       )}

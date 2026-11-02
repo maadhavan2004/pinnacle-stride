@@ -13,18 +13,18 @@ export const metadata: Metadata = {
 
 export default function HowWeWorkPage() {
   return (
-    <div className="flex flex-col gap-20 sm:gap-28 py-12 sm:py-20">
+    <div className="flex flex-col gap-16 sm:gap-24 py-10 sm:py-16">
       {/* Process Header */}
       <section>
         <Container size="narrow">
-          <div className="text-center space-y-4">
-            <span className="text-xs sm:text-sm font-mono uppercase tracking-wider text-[#1D4ED8] dark:text-[#3B82F6] font-semibold">
+          <div className="text-center space-y-3">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-semibold">
               Delivery Methodology
             </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0A1128] dark:text-[#F4F7FB]">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text">
               How We Work: Transparent & Accountable.
             </h1>
-            <p className="text-base sm:text-lg text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed max-w-2xl mx-auto pt-2">
+            <p className="text-xs sm:text-sm text-text-muted leading-relaxed max-w-xl mx-auto pt-1">
               We eliminate guesswork with a five-stage delivery model rooted in asynchronous communication, strict type safety, and verifiable milestones.
             </p>
           </div>
@@ -34,40 +34,40 @@ export default function HowWeWorkPage() {
       {/* Five Stages in Full Detail */}
       <section>
         <Container>
-          <div className="space-y-12">
+          <div className="space-y-6">
             {processStages.map((stage) => (
               <div
                 key={stage.id}
-                className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] shadow-sm flex flex-col lg:flex-row gap-8 justify-between items-start"
+                className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs flex flex-col lg:flex-row gap-6 justify-between items-start"
               >
-                <div className="lg:max-w-xl space-y-4">
-                  <div className="flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-xl bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] font-mono font-bold text-base flex items-center justify-center">
+                <div className="lg:max-w-xl space-y-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-8 h-8 rounded-lg bg-surface-hover border border-border text-text font-mono font-bold text-xs flex items-center justify-center">
                       0{stage.step}
                     </span>
                     <Badge variant="default">Stage {stage.step}</Badge>
-                    <span className="text-xs font-mono text-[#0EA5A4] dark:text-[#2DD4BF] flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" />
+                    <span className="text-[11px] font-mono text-text-subtle flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
                       {stage.duration}
                     </span>
                   </div>
 
-                  <h2 className="text-2xl font-bold text-[#0A1128] dark:text-[#F4F7FB]">
+                  <h2 className="text-lg sm:text-xl font-bold text-text">
                     {stage.title}
                   </h2>
 
-                  <p className="text-sm sm:text-base text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
+                  <p className="text-xs text-text-muted leading-relaxed">
                     {stage.summary}
                   </p>
 
                   <div className="pt-2">
-                    <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#0A1128] dark:text-[#F4F7FB] mb-2.5">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-text-subtle mb-2">
                       Stage Activities:
                     </div>
-                    <ul className="space-y-2">
+                    <ul className="space-y-1.5">
                       {stage.activities.map((act, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#4A5878] dark:text-[#A9B6D3]">
-                          <CheckCircle2 className="w-4 h-4 text-[#2DD4BF] shrink-0 mt-0.5" />
+                        <li key={i} className="flex items-start gap-2 text-xs text-text-muted">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                           <span>{act}</span>
                         </li>
                       ))}
@@ -76,14 +76,14 @@ export default function HowWeWorkPage() {
                 </div>
 
                 {/* Tangible Artifacts Box */}
-                <div className="w-full lg:w-80 p-6 rounded-2xl bg-[#F4F7FB] dark:bg-[#0A1128] border border-[#D8E0EE] dark:border-[#22305A] space-y-3">
-                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#0EA5A4] dark:text-[#2DD4BF] flex items-center gap-2">
-                    <FileCode className="w-4 h-4" />
+                <div className="w-full lg:w-72 p-4 rounded-lg bg-bg-subtle border border-border space-y-2">
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-primary font-semibold flex items-center gap-1.5">
+                    <FileCode className="w-3.5 h-3.5" />
                     Tangible Outputs:
                   </div>
-                  <ul className="space-y-2 text-xs text-[#0A1128] dark:text-[#F4F7FB]">
+                  <ul className="space-y-1.5 text-xs text-text">
                     {stage.outputs.map((out, i) => (
-                      <li key={i} className="pl-3 border-l-2 border-[#1D4ED8] py-1 font-mono">
+                      <li key={i} className="pl-2 border-l border-primary/50 text-[11px] font-mono">
                         {out}
                       </li>
                     ))}
@@ -96,7 +96,7 @@ export default function HowWeWorkPage() {
       </section>
 
       {/* Delivery Model & Code Ownership Commitments */}
-      <section className="bg-[#F4F7FB]/50 dark:bg-[#0F1A38]/50 py-16 border-y border-[#D8E0EE] dark:border-[#22305A]">
+      <section className="bg-bg-subtle/50 py-14 sm:py-16 border-y border-border">
         <Container>
           <SectionHeading
             eyebrow="Commercial Principles"
@@ -104,39 +104,39 @@ export default function HowWeWorkPage() {
             description="Clear expectations on how we collaborate, guarantee code ownership, and handle long-term operations."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="space-y-3 p-6">
-              <div className="w-10 h-10 rounded-lg bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] flex items-center justify-center">
-                <MessageSquare className="w-5 h-5" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Card className="space-y-2.5 p-5">
+              <div className="w-8 h-8 rounded-lg bg-surface-hover border border-border text-text flex items-center justify-center">
+                <MessageSquare className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-bold text-[#0A1128] dark:text-[#F4F7FB]">
+              <h3 className="text-sm font-semibold text-text">
                 Communication Cadence
               </h3>
-              <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
+              <p className="text-xs text-text-muted leading-relaxed">
                 {deliveryModel.cadence}
               </p>
             </Card>
 
-            <Card className="space-y-3 p-6">
-              <div className="w-10 h-10 rounded-lg bg-[#0EA5A4]/10 text-[#0EA5A4] dark:text-[#2DD4BF] flex items-center justify-center">
-                <ShieldCheck className="w-5 h-5" />
+            <Card className="space-y-2.5 p-5">
+              <div className="w-8 h-8 rounded-lg bg-surface-hover border border-border text-text flex items-center justify-center">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
               </div>
-              <h3 className="text-lg font-bold text-[#0A1128] dark:text-[#F4F7FB]">
+              <h3 className="text-sm font-semibold text-text">
                 100% Code Ownership
               </h3>
-              <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
+              <p className="text-xs text-text-muted leading-relaxed">
                 {deliveryModel.codeOwnership}
               </p>
             </Card>
 
-            <Card className="space-y-3 p-6">
-              <div className="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                <Terminal className="w-5 h-5" />
+            <Card className="space-y-2.5 p-5">
+              <div className="w-8 h-8 rounded-lg bg-surface-hover border border-border text-text flex items-center justify-center">
+                <Terminal className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-bold text-[#0A1128] dark:text-[#F4F7FB]">
+              <h3 className="text-sm font-semibold text-text">
                 Hosting Freedom
               </h3>
-              <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
+              <p className="text-xs text-text-muted leading-relaxed">
                 {deliveryModel.hostingFreedom}
               </p>
             </Card>
@@ -148,35 +148,35 @@ export default function HowWeWorkPage() {
       <section>
         <Container size="narrow">
           <SectionHeading
-            eyebrow="Questions & Clarity"
+            eyebrow="Clarity"
             title="Frequently Asked Questions"
             description="Clear, honest answers to common questions regarding timelines, pricing, code ownership, and warranties."
           />
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {faqsData.map((faq) => (
               <div
                 key={faq.question}
-                className="p-6 rounded-2xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] space-y-2"
+                className="p-5 rounded-xl bg-surface border border-border space-y-2 shadow-xs"
               >
-                <div className="flex items-center gap-2 text-xs font-mono text-[#0EA5A4] dark:text-[#2DD4BF]">
-                  <span>Topic: {faq.topic}</span>
+                <div className="text-[10px] font-mono text-primary">
+                  Topic: {faq.topic}
                 </div>
-                <h3 className="text-base font-bold text-[#0A1128] dark:text-[#F4F7FB]">
+                <h3 className="text-sm font-semibold text-text">
                   {faq.question}
                 </h3>
-                <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed pt-1">
+                <p className="text-xs text-text-muted leading-relaxed pt-0.5">
                   {faq.answerMd}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-12 text-center">
+          <div className="mt-10 text-center">
             <Link href="/contact">
-              <Button size="lg" variant="primary">
-                Discuss Your Specific Needs
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <Button size="md" variant="primary">
+                Discuss Your Requirements
+                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>
             </Link>
           </div>

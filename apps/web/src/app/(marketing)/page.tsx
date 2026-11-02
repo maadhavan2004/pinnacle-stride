@@ -17,7 +17,6 @@ import {
   CheckCircle2,
   Sparkles,
   ChevronRight,
-  Layers,
   Terminal,
 } from 'lucide-react';
 
@@ -26,51 +25,42 @@ export default function HomePage() {
   const featuredProducts = productsData.filter((pr) => pr.isFeatured).slice(0, 3);
 
   return (
-    <div className="flex flex-col gap-24 sm:gap-32 pb-24 overflow-hidden">
-      {/* 1. HERO SECTION */}
-      <section className="relative pt-12 sm:pt-20 lg:pt-28 pb-16 lg:pb-24 flex items-center">
+    <div className="flex flex-col gap-20 sm:gap-28 pb-20 overflow-hidden">
+      {/* 1. HERO SECTION (Linear / Vercel style) */}
+      <section className="relative pt-12 sm:pt-20 lg:pt-24 pb-12 sm:pb-16 flex items-center">
         <HeroPathAnimation />
         <Container>
-          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-            {/* Dual Strategic Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2.5 mb-6">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] border border-[#1D4ED8]/25">
-                <Boxes className="w-3.5 h-3.5" />
-                Digital Products
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-[#0EA5A4]/10 text-[#0EA5A4] dark:text-[#2DD4BF] border border-[#0EA5A4]/25">
-                <Sparkles className="w-3.5 h-3.5" />
-                Intelligent Solutions
-              </span>
+          <div className="max-w-3xl mx-auto text-center flex flex-col items-center">
+            {/* Minimalist Micro-Badge Pill */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium bg-surface border border-border text-text-muted mb-6 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span>PinnacleStride Engineering</span>
+              <span className="text-border">|</span>
+              <span className="text-text-subtle">Build Beyond. Stride Ahead.</span>
             </div>
 
-            {/* H1 Heading */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-[#0A1128] dark:text-[#F4F7FB] leading-[1.1] mb-6">
-              We Turn Bold Ideas Into{' '}
-              <span className="bg-gradient-to-r from-[#1D4ED8] via-[#3B82F6] to-[#2DD4BF] bg-clip-text text-transparent">
-                Powerful Digital Solutions.
-              </span>
+            {/* Headline */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-text leading-[1.15] mb-5">
+              Turning bold ideas into{' '}
+              <span className="text-text-muted font-normal">resilient software.</span>
             </h1>
 
-            {/* Tagline & Supporting Paragraph */}
-            <p className="text-lg sm:text-xl font-medium text-[#1D4ED8] dark:text-[#3B82F6] tracking-wide mb-3 font-mono">
-              Build Beyond. Stride Ahead.
-            </p>
-            <p className="text-base sm:text-lg text-[#4A5878] dark:text-[#A9B6D3] max-w-2xl leading-relaxed mb-10">
-              A product-building technology startup delivering custom web platforms, bespoke AI systems, and cloud infrastructure. We engineer with strict type safety, honest scoping, and transparent milestones.
+            {/* Supporting Paragraph */}
+            <p className="text-sm sm:text-base text-text-muted max-w-xl leading-relaxed mb-8">
+              A product-building technology startup that delivers custom web applications, grounded RAG architectures, and reproducible cloud infrastructure.
             </p>
 
-            {/* Two Primary CTAs */}
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               <Link href="/contact" className="w-full sm:w-auto">
-                <Button size="lg" variant="primary" className="w-full sm:w-auto text-base">
+                <Button size="lg" variant="primary" className="w-full sm:w-auto">
                   Start a Project
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </Link>
               <Link href="/projects" className="w-full sm:w-auto">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto text-base">
-                  Explore Our Work
+                <Button size="lg" variant="secondary" className="w-full sm:w-auto">
+                  Explore Case Studies
                 </Button>
               </Link>
             </div>
@@ -78,75 +68,75 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* 2. WHAT WE DO (THE THREE PILLARS) */}
+      {/* 2. THE THREE PILLARS */}
       <section className="relative">
         <Container>
           <SectionHeading
             eyebrow="Core Competencies"
             title="The Three Pillars of PinnacleStride"
-            description="We bridge the gap between building our own resilient software products and delivering high-impact engineering solutions for clients."
+            description="We combine the rigor of building our own independent software products with the discipline of engineering custom solutions for client partners."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Pillar 1 */}
             <Link href="/services" className="group">
-              <Card className="h-full flex flex-col justify-between border-t-4 border-t-[#1D4ED8]">
+              <Card className="h-full flex flex-col justify-between p-6">
                 <div>
-                  <div className="w-12 h-12 rounded-xl bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] flex items-center justify-center mb-6">
-                    <Code2 className="w-6 h-6" />
+                  <div className="w-9 h-9 rounded-lg bg-surface-hover border border-border text-text flex items-center justify-center mb-5 group-hover:border-primary/50 transition-colors">
+                    <Code2 className="w-4 h-4" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-[#0A1128] dark:text-[#F4F7FB] group-hover:text-[#1D4ED8] dark:group-hover:text-[#3B82F6] transition-colors">
+                  <h3 className="text-base font-semibold mb-2 text-text group-hover:text-primary transition-colors">
                     Custom Digital Solutions
                   </h3>
-                  <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed mb-6">
-                    Full-stack web applications, accessible marketing platforms, and internal backoffices built with Next.js, NestJS, and PostgreSQL.
+                  <p className="text-xs text-text-muted leading-relaxed mb-5">
+                    Full-stack web applications, accessible marketing engines, and internal backoffices engineered with Next.js, NestJS, and PostgreSQL.
                   </p>
                 </div>
-                <div className="flex items-center text-sm font-semibold text-[#1D4ED8] dark:text-[#3B82F6] group-hover:translate-x-1 transition-transform">
+                <div className="flex items-center text-xs font-medium text-text group-hover:text-primary transition-colors">
                   <span>Explore Services</span>
-                  <ChevronRight className="w-4 h-4 ml-1" />
+                  <ChevronRight className="w-3.5 h-3.5 ml-1 opacity-70 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </Card>
             </Link>
 
             {/* Pillar 2 */}
             <Link href="/services/genai-agentic-ai" className="group">
-              <Card className="h-full flex flex-col justify-between border-t-4 border-t-[#0EA5A4]">
+              <Card className="h-full flex flex-col justify-between p-6">
                 <div>
-                  <div className="w-12 h-12 rounded-xl bg-[#0EA5A4]/10 text-[#0EA5A4] dark:text-[#2DD4BF] flex items-center justify-center mb-6">
-                    <Cpu className="w-6 h-6" />
+                  <div className="w-9 h-9 rounded-lg bg-surface-hover border border-border text-text flex items-center justify-center mb-5 group-hover:border-primary/50 transition-colors">
+                    <Cpu className="w-4 h-4" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-[#0A1128] dark:text-[#F4F7FB] group-hover:text-[#0EA5A4] dark:group-hover:text-[#2DD4BF] transition-colors">
+                  <h3 className="text-base font-semibold mb-2 text-text group-hover:text-primary transition-colors">
                     AI & Intelligent Systems
                   </h3>
-                  <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed mb-6">
+                  <p className="text-xs text-text-muted leading-relaxed mb-5">
                     Grounded RAG assistants, autonomous multi-step agents, and predictive machine learning models with verifiable citations and guardrails.
                   </p>
                 </div>
-                <div className="flex items-center text-sm font-semibold text-[#0EA5A4] dark:text-[#2DD4BF] group-hover:translate-x-1 transition-transform">
+                <div className="flex items-center text-xs font-medium text-text group-hover:text-primary transition-colors">
                   <span>View AI Capabilities</span>
-                  <ChevronRight className="w-4 h-4 ml-1" />
+                  <ChevronRight className="w-3.5 h-3.5 ml-1 opacity-70 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </Card>
             </Link>
 
             {/* Pillar 3 */}
             <Link href="/products" className="group">
-              <Card className="h-full flex flex-col justify-between border-t-4 border-t-indigo-500">
+              <Card className="h-full flex flex-col justify-between p-6">
                 <div>
-                  <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-6">
-                    <Boxes className="w-6 h-6" />
+                  <div className="w-9 h-9 rounded-lg bg-surface-hover border border-border text-text flex items-center justify-center mb-5 group-hover:border-primary/50 transition-colors">
+                    <Boxes className="w-4 h-4" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-[#0A1128] dark:text-[#F4F7FB] group-hover:text-indigo-500 transition-colors">
+                  <h3 className="text-base font-semibold mb-2 text-text group-hover:text-primary transition-colors">
                     Our Own Products
                   </h3>
-                  <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed mb-6">
+                  <p className="text-xs text-text-muted leading-relaxed mb-5">
                     We dogfood our engineering by conceiving, building, and operating independent SaaS tools and open-source infrastructure packages.
                   </p>
                 </div>
-                <div className="flex items-center text-sm font-semibold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform">
+                <div className="flex items-center text-xs font-medium text-text group-hover:text-primary transition-colors">
                   <span>Discover Products</span>
-                  <ChevronRight className="w-4 h-4 ml-1" />
+                  <ChevronRight className="w-3.5 h-3.5 ml-1 opacity-70 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </Card>
             </Link>
@@ -154,26 +144,27 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* 3. FEATURED PRODUCTS (WITH HONEST STATUS BADGES) */}
+      {/* 3. FEATURED PRODUCTS (SOPHISTICATED SaaS CARDS) */}
       <section className="relative">
         <Container>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-3">
             <div>
-              <span className="text-xs sm:text-sm font-mono uppercase tracking-wider text-[#0EA5A4] dark:text-[#2DD4BF] font-semibold">
-                In-House Innovation
+              <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-semibold">
+                In-House Software
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[#0A1128] dark:text-[#F4F7FB] mt-2">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-text mt-1">
                 Featured Software Products
               </h2>
             </div>
-            <Link href="/products" className="text-sm font-semibold text-[#1D4ED8] dark:text-[#3B82F6] hover:underline flex items-center">
-              View all products <ArrowRight className="w-4 h-4 ml-1" />
+            <Link href="/products" className="text-xs font-medium text-text-muted hover:text-text flex items-center gap-1 transition-colors">
+              <span>View all products</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {featuredProducts.map((prod) => (
-              <Card key={prod.slug} className="flex flex-col justify-between">
+              <Card key={prod.slug} className="flex flex-col justify-between p-6">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-4">
                     <Badge variant={prod.productStatus === 'LIVE' ? 'status-green' : 'status-amber'}>
@@ -183,39 +174,39 @@ export default function HomePage() {
                         ? 'Coming Soon'
                         : prod.productStatus}
                     </Badge>
-                    <span className="text-xs font-mono text-[#4A5878] dark:text-[#A9B6D3]">
+                    <span className="text-[10px] font-mono text-text-subtle">
                       Independent
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-[#0A1128] dark:text-[#F4F7FB] mb-2">
+                  <h3 className="text-sm font-semibold text-text mb-1.5">
                     {prod.name}
                   </h3>
-                  <p className="text-xs text-[#0EA5A4] dark:text-[#2DD4BF] font-medium mb-3">
+                  <p className="text-xs text-primary font-medium mb-3">
                     {prod.tagline}
                   </p>
-                  <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed mb-6">
+                  <p className="text-xs text-text-muted leading-relaxed mb-5">
                     {prod.problem}
                   </p>
 
-                  <div className="space-y-2 mb-6">
-                    <div className="text-xs font-mono font-semibold uppercase text-[#0A1128] dark:text-[#F4F7FB]">
-                      Key Highlights:
+                  <div className="space-y-1.5 mb-5 pt-3 border-t border-border/60">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-text-subtle">
+                      Core Highlights:
                     </div>
                     {prod.features.slice(0, 3).map((f, i) => (
-                      <div key={i} className="flex items-start gap-2 text-xs text-[#4A5878] dark:text-[#A9B6D3]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#2DD4BF] shrink-0 mt-0.5" />
+                      <div key={i} className="flex items-start gap-2 text-xs text-text-muted">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                         <span>{f}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#D8E0EE] dark:border-[#22305A] flex items-center justify-between">
-                  <span className="text-xs text-[#4A5878] dark:text-[#A9B6D3]">
-                    Status: <span className="font-semibold">{prod.productStatus.replace('_', ' ')}</span>
+                <div className="pt-3 border-t border-border flex items-center justify-between text-xs">
+                  <span className="text-[11px] font-mono text-text-subtle">
+                    Status: {prod.productStatus.replace('_', ' ')}
                   </span>
-                  <Link href="/products" className="text-xs font-semibold text-[#1D4ED8] dark:text-[#3B82F6] hover:underline">
+                  <Link href="/products" className="font-medium text-text hover:text-primary transition-colors">
                     Learn more →
                   </Link>
                 </div>
@@ -226,28 +217,28 @@ export default function HomePage() {
       </section>
 
       {/* 4. FEATURED PROJECTS / PORTFOLIO */}
-      <section className="relative bg-[#F4F7FB]/50 dark:bg-[#0F1A38]/50 py-16 border-y border-[#D8E0EE] dark:border-[#22305A]">
+      <section className="relative bg-bg-subtle/60 py-14 sm:py-16 border-y border-border">
         <Container>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-3">
             <div>
-              <span className="text-xs sm:text-sm font-mono uppercase tracking-wider text-[#1D4ED8] dark:text-[#3B82F6] font-semibold">
-                Proof of Capability
+              <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-semibold">
+                Verified Case Studies
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[#0A1128] dark:text-[#F4F7FB] mt-2">
-                Featured Engineering Work
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-text mt-1">
+                Engineering Work
               </h2>
             </div>
-            <Link href="/projects" className="text-sm font-semibold text-[#1D4ED8] dark:text-[#3B82F6] hover:underline flex items-center">
-              Browse full portfolio <ArrowRight className="w-4 h-4 ml-1" />
+            <Link href="/projects" className="text-xs font-medium text-text-muted hover:text-text flex items-center gap-1 transition-colors">
+              <span>Browse full portfolio</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {featuredProjects.map((project) => (
-              <Card key={project.slug} className="flex flex-col justify-between">
+              <Card key={project.slug} className="flex flex-col justify-between p-6">
                 <div>
-                  {/* Category & Project Type Tag */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                  <div className="flex items-center justify-between gap-2 mb-3">
                     <Badge variant="portfolio">
                       {project.projectType === 'INTERNAL_PORTFOLIO'
                         ? 'Internal Project'
@@ -255,24 +246,23 @@ export default function HomePage() {
                         ? 'Product'
                         : 'Client Work'}
                     </Badge>
-                    <span className="text-xs font-mono text-[#4A5878] dark:text-[#A9B6D3]">
+                    <span className="text-[10px] font-mono text-text-subtle">
                       {project.category.replace('_', ' ')}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-[#0A1128] dark:text-[#F4F7FB] mb-3">
+                  <h3 className="text-sm font-semibold text-text mb-2">
                     {project.title}
                   </h3>
-                  <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed mb-6">
+                  <p className="text-xs text-text-muted leading-relaxed mb-4">
                     {project.summary}
                   </p>
 
-                  {/* Tech stack tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-6">
+                  <div className="flex flex-wrap gap-1 mb-5">
                     {project.technologies.slice(0, 4).map((tech) => (
                       <span
                         key={tech}
-                        className="text-[11px] font-mono px-2 py-0.5 rounded bg-black/5 dark:bg-white/5 text-[#4A5878] dark:text-[#A9B6D3] border border-black/10 dark:border-white/10"
+                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface border border-border text-text-muted"
                       >
                         {tech}
                       </span>
@@ -280,13 +270,13 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#D8E0EE] dark:border-[#22305A]">
+                <div className="pt-3 border-t border-border">
                   <Link
                     href={`/projects/${project.slug}`}
-                    className="inline-flex items-center text-sm font-semibold text-[#1D4ED8] dark:text-[#3B82F6] hover:underline"
+                    className="inline-flex items-center text-xs font-medium text-text hover:text-primary transition-colors"
                   >
-                    <span>View Case Study</span>
-                    <ArrowRight className="w-4 h-4 ml-1" />
+                    <span>Read Case Study</span>
+                    <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </Link>
                 </div>
               </Card>
@@ -299,33 +289,33 @@ export default function HomePage() {
       <section className="relative">
         <Container>
           <SectionHeading
-            eyebrow="Technology Foundation"
-            title="Engineered With Modern Open Standards"
-            description="We select proven, reliable technologies that we master and use daily—no vaporware or unverified hype."
+            eyebrow="Open Standards"
+            title="Engineered With Modern Foundations"
+            description="We select proven technologies that we master and use daily—no vaporware or unverified hype."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {technologyCategories.map((cat) => (
               <div
                 key={cat.id}
-                className="p-6 rounded-2xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] space-y-4 shadow-sm"
+                className="p-5 rounded-xl bg-surface border border-border space-y-3 shadow-xs"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-base text-[#0A1128] dark:text-[#F4F7FB]">
+                  <h3 className="font-semibold text-xs text-text">
                     {cat.name}
                   </h3>
-                  <Terminal className="w-4 h-4 text-[#0EA5A4] dark:text-[#2DD4BF]" />
+                  <Terminal className="w-3.5 h-3.5 text-text-subtle" />
                 </div>
-                <p className="text-xs text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
+                <p className="text-[11px] text-text-muted leading-relaxed">
                   {cat.description}
                 </p>
-                <div className="space-y-2 pt-2 border-t border-[#D8E0EE]/60 dark:border-[#22305A]/60">
+                <div className="space-y-1.5 pt-2 border-t border-border/60">
                   {cat.items.map((tech) => (
                     <div key={tech.name} className="flex items-baseline justify-between gap-2 text-xs">
-                      <span className="font-semibold text-[#0A1128] dark:text-[#F4F7FB]">
+                      <span className="font-mono text-[11px] font-medium text-text">
                         {tech.name}
                       </span>
-                      <span className="text-[11px] text-[#4A5878] dark:text-[#A9B6D3] text-right truncate">
+                      <span className="text-[10px] text-text-subtle text-right truncate max-w-[160px]">
                         {tech.description}
                       </span>
                     </div>
@@ -338,37 +328,37 @@ export default function HomePage() {
       </section>
 
       {/* 6. HOW WE WORK (5-STAGE STEPPER) */}
-      <section className="relative bg-[#F4F7FB]/40 dark:bg-[#0F1A38]/40 py-16 border-y border-[#D8E0EE] dark:border-[#22305A]">
+      <section className="relative bg-bg-subtle/50 py-14 sm:py-16 border-y border-border">
         <Container>
           <SectionHeading
-            eyebrow="Our Process"
-            title="How We Work: Transparent & Disciplined"
-            description="From initial discovery to long-term operational health, our five clear stages ensure zero surprises."
+            eyebrow="Methodology"
+            title="A Transparent Five-Stage Process"
+            description="From discovery to maintenance, our structured stages guarantee accountability and zero surprises."
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 relative">
-            {processStages.map((stage, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3.5">
+            {processStages.map((stage) => (
               <div
                 key={stage.id}
-                className="relative p-5 rounded-2xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] flex flex-col justify-between"
+                className="p-4 rounded-xl bg-surface border border-border flex flex-col justify-between space-y-3"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="w-8 h-8 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] font-mono text-sm font-bold flex items-center justify-center">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-mono font-bold text-primary">
                       0{stage.step}
                     </span>
-                    <span className="text-[11px] font-mono text-[#0EA5A4] dark:text-[#2DD4BF]">
+                    <span className="text-[10px] font-mono text-text-subtle">
                       {stage.duration}
                     </span>
                   </div>
-                  <h3 className="font-bold text-sm text-[#0A1128] dark:text-[#F4F7FB] mb-2">
+                  <h3 className="font-semibold text-xs text-text mb-1.5">
                     {stage.title}
                   </h3>
-                  <p className="text-xs text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed mb-4">
+                  <p className="text-[11px] text-text-muted leading-relaxed">
                     {stage.summary}
                   </p>
                 </div>
-                <div className="pt-3 border-t border-[#D8E0EE] dark:border-[#22305A] text-[11px] text-[#4A5878] dark:text-[#A9B6D3] font-mono">
+                <div className="pt-2 border-t border-border/50 text-[10px] font-mono text-text-subtle truncate">
                   {stage.outputs[0]}
                 </div>
               </div>
@@ -377,42 +367,41 @@ export default function HomePage() {
 
           <div className="mt-8 text-center">
             <Link href="/how-we-work">
-              <Button size="md" variant="secondary">
-                Read Detailed Delivery Model & Maintenance Options
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <Button size="sm" variant="secondary" className="text-xs">
+                Detailed Delivery Model & Maintenance Options
+                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>
             </Link>
           </div>
         </Container>
       </section>
 
-      {/* 7. FINAL CALL TO ACTION BANNER */}
+      {/* 7. FINAL CALL TO ACTION */}
       <section className="relative">
         <Container>
-          <div className="relative overflow-hidden rounded-3xl p-8 sm:p-12 lg:p-16 bg-gradient-to-br from-[#0A1128] via-[#131F42] to-[#0A1128] text-white border border-[#22305A] shadow-2xl text-center flex flex-col items-center">
-            <div className="max-w-2xl mx-auto space-y-6">
-              <span className="inline-block text-xs font-mono uppercase tracking-wider text-[#2DD4BF] font-semibold">
-                Ready to stride ahead?
-              </span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
-                Have an idea worth building?
-              </h2>
-              <p className="text-base sm:text-lg text-[#A9B6D3] leading-relaxed">
-                Whether you need a high-performance commercial website, a modular SaaS MVP, or a custom RAG intelligence system, let’s have a structured, candid conversation.
-              </p>
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/contact" className="w-full sm:w-auto">
-                  <Button size="lg" variant="primary" className="w-full sm:w-auto text-base">
-                    Start a Conversation →
-                  </Button>
-                </Link>
-                <a
-                  href="mailto:hello@pinnaclestride.com"
-                  className="text-sm text-[#A9B6D3] hover:text-white transition-colors underline underline-offset-4"
-                >
-                  Or email hello@pinnaclestride.com
-                </a>
-              </div>
+          <div className="rounded-2xl p-8 sm:p-12 bg-surface border border-border text-center flex flex-col items-center max-w-3xl mx-auto shadow-sm">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-semibold mb-2">
+              Start a Conversation
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-text mb-3">
+              Have an idea worth building?
+            </h2>
+            <p className="text-xs sm:text-sm text-text-muted leading-relaxed max-w-lg mb-6">
+              Whether you need a high-conversion marketing platform, a modular SaaS backoffice, or a grounded RAG intelligence assistant, we’re ready to discuss requirements.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+              <Link href="/contact" className="w-full sm:w-auto">
+                <Button size="md" variant="primary" className="w-full sm:w-auto">
+                  Start a Project
+                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                </Button>
+              </Link>
+              <a
+                href="mailto:hello@pinnaclestride.com"
+                className="text-xs text-text-muted hover:text-text transition-colors py-2 px-3"
+              >
+                Or email hello@pinnaclestride.com
+              </a>
             </div>
           </div>
         </Container>

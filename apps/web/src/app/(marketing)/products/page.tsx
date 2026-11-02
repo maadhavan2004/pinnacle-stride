@@ -1,9 +1,9 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Container, Card, Badge, Button, SectionHeading } from '@ps/ui';
+import { Container, Card, Badge, Button } from '@ps/ui';
 import { productsData } from '@ps/content';
-import { CheckCircle2, Boxes, Clock, Lightbulb, ArrowRight, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Clock, Lightbulb, ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Software Products — In-House Tools & Open Infrastructure',
@@ -13,17 +13,17 @@ export const metadata: Metadata = {
 
 export default function ProductsPage() {
   return (
-    <div className="py-12 sm:py-20 space-y-16">
+    <div className="py-10 sm:py-16 space-y-12">
       {/* Header */}
       <Container size="narrow">
-        <div className="text-center space-y-4">
-          <span className="text-xs sm:text-sm font-mono uppercase tracking-wider text-[#0EA5A4] dark:text-[#2DD4BF] font-semibold">
+        <div className="text-center space-y-3">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-semibold">
             In-House Software
           </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0A1128] dark:text-[#F4F7FB]">
-            Our Own Software Products.
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text">
+            Our Software Products.
           </h1>
-          <p className="text-base sm:text-lg text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed max-w-2xl mx-auto pt-2">
+          <p className="text-xs sm:text-sm text-text-muted leading-relaxed max-w-xl mx-auto pt-1">
             We are not just a client agency—we build and operate independent software tools. Working on our own products gives us deep empathy for architecture, maintainability, and end-user delight.
           </p>
         </div>
@@ -31,15 +31,15 @@ export default function ProductsPage() {
 
       {/* Products Listing */}
       <Container>
-        <div className="space-y-12">
+        <div className="space-y-6">
           {productsData.map((prod) => (
             <div
               key={prod.slug}
-              className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] shadow-sm flex flex-col lg:flex-row gap-10 items-start justify-between"
+              className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs flex flex-col lg:flex-row gap-8 items-start justify-between"
             >
               {/* Left Column: Product Information */}
-              <div className="lg:max-w-xl space-y-5">
-                <div className="flex items-center gap-3">
+              <div className="lg:max-w-xl space-y-4">
+                <div className="flex items-center gap-2.5">
                   <Badge
                     variant={
                       prod.productStatus === 'LIVE'
@@ -48,6 +48,7 @@ export default function ProductsPage() {
                         ? 'status-amber'
                         : 'status-blue'
                     }
+                    size="sm"
                   >
                     {prod.productStatus === 'IN_DEVELOPMENT'
                       ? 'In Development'
@@ -55,73 +56,73 @@ export default function ProductsPage() {
                       ? 'Coming Soon'
                       : prod.productStatus}
                   </Badge>
-                  <span className="text-xs font-mono text-[#4A5878] dark:text-[#A9B6D3]">
+                  <span className="text-[10px] font-mono text-text-subtle">
                     Independent Product
                   </span>
                 </div>
 
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A1128] dark:text-[#F4F7FB]">
+                <h2 className="text-xl sm:text-2xl font-bold text-text">
                   {prod.name}
                 </h2>
 
-                <p className="text-sm sm:text-base font-medium text-[#0EA5A4] dark:text-[#2DD4BF]">
+                <p className="text-xs sm:text-sm font-medium text-primary">
                   {prod.tagline}
                 </p>
 
-                <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
+                <p className="text-xs text-text-muted leading-relaxed">
                   {prod.bodyMd}
                 </p>
 
-                <div className="space-y-2 pt-2">
-                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#0A1128] dark:text-[#F4F7FB]">
+                <div className="space-y-1 pt-1">
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-text-subtle">
                     The Problem It Solves:
                   </div>
-                  <p className="text-xs sm:text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed bg-[#F4F7FB] dark:bg-[#0A1128] p-4 rounded-xl border border-[#D8E0EE] dark:border-[#22305A]">
+                  <p className="text-xs text-text-muted leading-relaxed bg-bg-subtle p-3 rounded-lg border border-border">
                     {prod.problem}
                   </p>
                 </div>
 
                 {prod.targetUsers && (
-                  <div className="text-xs text-[#4A5878] dark:text-[#A9B6D3]">
-                    <span className="font-semibold text-[#0A1128] dark:text-[#F4F7FB]">Designed for:</span>{' '}
+                  <div className="text-xs text-text-subtle">
+                    <span className="font-medium text-text">Target Users:</span>{' '}
                     {prod.targetUsers}
                   </div>
                 )}
               </div>
 
               {/* Right Column: Features & Roadmap */}
-              <div className="w-full lg:w-96 space-y-6 bg-[#F4F7FB]/60 dark:bg-[#0F1A38]/60 p-6 rounded-2xl border border-[#D8E0EE] dark:border-[#22305A]">
+              <div className="w-full lg:w-80 space-y-4 bg-bg-subtle/70 p-5 rounded-lg border border-border text-xs">
                 <div>
-                  <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#0A1128] dark:text-[#F4F7FB] mb-3">
+                  <h3 className="text-[11px] font-mono uppercase tracking-wider text-text font-semibold mb-2">
                     Key Capabilities:
                   </h3>
-                  <ul className="space-y-2.5">
+                  <ul className="space-y-2">
                     {prod.features.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2.5 text-xs text-[#4A5878] dark:text-[#A9B6D3]">
-                        <CheckCircle2 className="w-4 h-4 text-[#2DD4BF] shrink-0 mt-0.5" />
+                      <li key={i} className="flex items-start gap-2 text-text-muted">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="pt-4 border-t border-[#D8E0EE] dark:border-[#22305A]">
-                  <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#0A1128] dark:text-[#F4F7FB] mb-3 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#1D4ED8] dark:text-[#3B82F6]" />
+                <div className="pt-3 border-t border-border">
+                  <h3 className="text-[11px] font-mono uppercase tracking-wider text-text font-semibold mb-2 flex items-center gap-1.5">
+                    <Clock className="w-3 h-3 text-primary" />
                     Development Roadmap:
                   </h3>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {prod.roadmap.map((step, i) => (
-                      <div key={i} className="text-xs text-[#4A5878] dark:text-[#A9B6D3] pl-2 border-l border-[#3B82F6]/40">
+                      <div key={i} className="text-xs text-text-muted pl-2 border-l border-primary/40 font-mono text-[11px]">
                         {step}
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#D8E0EE] dark:border-[#22305A]">
+                <div className="pt-3 border-t border-border">
                   <Link href="/contact" className="w-full block">
-                    <Button size="sm" variant="outline" className="w-full text-xs">
+                    <Button size="sm" variant="secondary" className="w-full text-xs">
                       Join Early Access List
                     </Button>
                   </Link>
@@ -132,23 +133,23 @@ export default function ProductsPage() {
         </div>
       </Container>
 
-      {/* Suggest a Product Idea Section (FR-43) */}
+      {/* Suggest a Product Idea Section */}
       <Container size="narrow">
-        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#1D4ED8]/10 via-[#0EA5A4]/10 to-transparent border border-[#1D4ED8]/25 text-center space-y-4">
-          <div className="w-12 h-12 rounded-xl bg-[#0EA5A4]/20 text-[#0EA5A4] dark:text-[#2DD4BF] flex items-center justify-center mx-auto">
-            <Lightbulb className="w-6 h-6" />
+        <div className="p-6 sm:p-8 rounded-xl bg-surface border border-border text-center space-y-3 shadow-xs">
+          <div className="w-8 h-8 rounded-lg bg-surface-hover border border-border text-primary flex items-center justify-center mx-auto">
+            <Lightbulb className="w-4 h-4" />
           </div>
-          <h2 className="text-2xl font-bold text-[#0A1128] dark:text-[#F4F7FB]">
+          <h2 className="text-lg font-semibold text-text">
             Have an idea for a tool that should exist?
           </h2>
-          <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] max-w-lg mx-auto">
+          <p className="text-xs text-text-muted max-w-md mx-auto leading-relaxed">
             If you encounter repeated operational bottlenecks in your work, tell us. We actively evaluate open-source and commercial product concepts to build in public.
           </p>
-          <div className="pt-2">
+          <div className="pt-1">
             <Link href="/contact">
-              <Button size="md" variant="secondary">
-                Suggest an Idea or Problem
-                <ArrowRight className="w-4 h-4 ml-1.5" />
+              <Button size="sm" variant="primary">
+                Suggest an Idea
+                <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </Button>
             </Link>
           </div>

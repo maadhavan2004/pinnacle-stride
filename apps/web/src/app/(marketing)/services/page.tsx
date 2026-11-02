@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Container, Card, Button, SectionHeading, Badge } from '@ps/ui';
 import { servicesData } from '@ps/content';
-import { CheckCircle2, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Engineering Services — Tailored Web, AI & Cloud Solutions',
@@ -13,79 +13,79 @@ export const metadata: Metadata = {
 
 export default function ServicesPage() {
   return (
-    <div className="flex flex-col gap-20 sm:gap-28 py-12 sm:py-20">
+    <div className="flex flex-col gap-16 sm:gap-24 py-10 sm:py-16">
       {/* Services Header */}
       <section>
         <Container size="narrow">
-          <div className="text-center space-y-4">
-            <span className="text-xs sm:text-sm font-mono uppercase tracking-wider text-[#1D4ED8] dark:text-[#3B82F6] font-semibold">
-              Capabilities & Offerings
+          <div className="text-center space-y-3">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-semibold">
+              Capabilities
             </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0A1128] dark:text-[#F4F7FB]">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text">
               Engineering Services Built for Impact.
             </h1>
-            <p className="text-base sm:text-lg text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed max-w-2xl mx-auto pt-2">
+            <p className="text-xs sm:text-sm text-text-muted leading-relaxed max-w-xl mx-auto pt-1">
               We deliver custom digital solutions engineered with strict type safety, open standards, and verifiable results. No cookie-cutter templates, no bloat.
             </p>
-            {/* Scoping Note per PRD §1.7 & FR-31 */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] text-xs font-mono font-medium border border-[#1D4ED8]/20 mt-4">
-              <ShieldCheck className="w-4 h-4" />
+            {/* Scoping Note */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface border border-border text-[11px] font-mono text-text-muted mt-3 shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
               <span>We scope projects to our team's real skills, timeline, and resources.</span>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* Services Listing (All 5 Categories) */}
+      {/* Services Listing */}
       <section>
         <Container>
-          <div className="space-y-16">
+          <div className="space-y-8">
             {servicesData.map((service, index) => (
               <div
                 key={service.slug}
                 id={service.slug}
-                className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] shadow-sm flex flex-col lg:flex-row gap-10 items-start justify-between"
+                className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs flex flex-col lg:flex-row gap-8 items-start justify-between"
               >
                 {/* Left Overview Column */}
-                <div className="lg:max-w-xl space-y-5">
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold px-2.5 py-1 rounded bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6]">
+                <div className="lg:max-w-xl space-y-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-surface-hover border border-border text-text">
                       0{index + 1}
                     </span>
                     <Badge variant="default">{service.serviceType.replace('_', ' ')}</Badge>
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A1128] dark:text-[#F4F7FB]">
+                  <h2 className="text-xl sm:text-2xl font-bold text-text">
                     {service.title}
                   </h2>
 
-                  <p className="text-sm sm:text-base font-medium text-[#0EA5A4] dark:text-[#2DD4BF]">
+                  <p className="text-xs sm:text-sm font-medium text-primary">
                     {service.tagline}
                   </p>
 
-                  <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
+                  <p className="text-xs text-text-muted leading-relaxed">
                     {service.summary}
                   </p>
 
                   <div className="pt-2">
-                    <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#0A1128] dark:text-[#F4F7FB] mb-2">
+                    <div className="text-[11px] font-mono uppercase tracking-wider text-text-subtle mb-1.5">
                       Business Problem Addressed:
                     </div>
-                    <p className="text-xs sm:text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed bg-[#F4F7FB] dark:bg-[#0A1128] p-4 rounded-xl border border-[#D8E0EE] dark:border-[#22305A]">
+                    <p className="text-xs text-text-muted leading-relaxed bg-bg-subtle p-3 rounded-lg border border-border">
                       {service.problemSolved}
                     </p>
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-4 flex flex-wrap items-center gap-4">
+                  <div className="pt-3 flex flex-wrap items-center gap-3">
                     <Link href={`/contact?service=${service.serviceType}`}>
-                      <Button size="md" variant="primary">
-                        Discuss Your Requirements
-                        <ArrowRight className="w-4 h-4 ml-1.5" />
+                      <Button size="sm" variant="primary">
+                        Discuss Requirements
+                        <ArrowRight className="w-3.5 h-3.5 ml-1" />
                       </Button>
                     </Link>
                     <Link href={`/services/${service.slug}`}>
-                      <Button size="md" variant="secondary">
+                      <Button size="sm" variant="secondary">
                         Service Details
                       </Button>
                     </Link>
@@ -93,30 +93,30 @@ export default function ServicesPage() {
                 </div>
 
                 {/* Right What We Build Column */}
-                <div className="w-full lg:w-96 space-y-6 bg-[#F4F7FB]/60 dark:bg-[#0F1A38]/60 p-6 rounded-2xl border border-[#D8E0EE] dark:border-[#22305A]">
+                <div className="w-full lg:w-80 space-y-4 bg-bg-subtle/70 p-5 rounded-lg border border-border text-xs">
                   <div>
-                    <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#0A1128] dark:text-[#F4F7FB] mb-3">
+                    <h3 className="text-[11px] font-mono uppercase tracking-wider text-text font-semibold mb-2.5">
                       What We Build:
                     </h3>
-                    <ul className="space-y-2.5">
+                    <ul className="space-y-2">
                       {service.whatWeBuild.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs text-[#4A5878] dark:text-[#A9B6D3]">
-                          <CheckCircle2 className="w-4 h-4 text-[#2DD4BF] shrink-0 mt-0.5" />
+                        <li key={i} className="flex items-start gap-2 text-text-muted">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="pt-4 border-t border-[#D8E0EE] dark:border-[#22305A]">
-                    <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#0A1128] dark:text-[#F4F7FB] mb-2">
-                      Technology Stack:
+                  <div className="pt-3 border-t border-border">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-text-subtle mb-1.5">
+                      Tech Focus:
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-1">
                       {service.techFocus.map((tech) => (
                         <span
                           key={tech}
-                          className="text-[11px] font-mono px-2 py-0.5 rounded bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] text-[#0A1128] dark:text-[#F4F7FB]"
+                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface border border-border text-text"
                         >
                           {tech}
                         </span>

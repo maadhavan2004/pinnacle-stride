@@ -29,19 +29,23 @@ export const FormField: React.FC<FieldWrapperProps> = ({
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
       {label && (
-        <label htmlFor={id} className="text-sm font-medium text-[#0A1128] dark:text-[#F4F7FB] flex items-center gap-1">
+        <label
+          htmlFor={id}
+          className="text-xs font-medium text-text-muted flex items-center gap-1 select-none"
+        >
           {label}
-          {required && <span className="text-red-500" aria-hidden="true">*</span>}
+          {required && <span className="text-red-500 font-mono">*</span>}
         </label>
       )}
       {children(id, describedBy)}
       {helperText && !error && (
-        <p id={helperId} className="text-xs text-[#4A5878] dark:text-[#A9B6D3]">
+        <p id={helperId} className="text-[11px] text-text-subtle">
           {helperText}
         </p>
       )}
       {error && (
-        <p id={errorId} role="alert" className="text-xs font-medium text-red-600 dark:text-red-400">
+        <p id={errorId} role="alert" className="text-[11px] font-medium text-danger flex items-center gap-1">
+          <span className="w-1 h-1 rounded-full bg-danger shrink-0" />
           {error}
         </p>
       )}
@@ -59,12 +63,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         ref={ref}
         className={cn(
-          'w-full min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm transition-all',
-          'bg-white dark:bg-[#0A1128] text-[#0A1128] dark:text-[#F4F7FB]',
-          'border border-[#D8E0EE] dark:border-[#22305A]',
-          'placeholder:text-[#4A5878]/60 dark:placeholder:text-[#A9B6D3]/50',
-          'focus:outline-none focus:ring-2 focus:ring-[#2DD4BF] focus:border-transparent',
-          error && 'border-red-500 focus:ring-red-500',
+          'w-full h-9 px-3 rounded-lg text-xs transition-colors',
+          'bg-surface text-text border border-border',
+          'placeholder:text-text-subtle/60',
+          'focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary',
+          error && 'border-danger focus:ring-danger focus:border-danger',
           className
         )}
         {...props}
@@ -84,12 +87,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       <textarea
         ref={ref}
         className={cn(
-          'w-full min-h-[120px] px-3.5 py-2.5 rounded-lg text-sm transition-all',
-          'bg-white dark:bg-[#0A1128] text-[#0A1128] dark:text-[#F4F7FB]',
-          'border border-[#D8E0EE] dark:border-[#22305A]',
-          'placeholder:text-[#4A5878]/60 dark:placeholder:text-[#A9B6D3]/50',
-          'focus:outline-none focus:ring-2 focus:ring-[#2DD4BF] focus:border-transparent',
-          error && 'border-red-500 focus:ring-red-500',
+          'w-full p-3 rounded-lg text-xs transition-colors resize-y min-h-[100px]',
+          'bg-surface text-text border border-border',
+          'placeholder:text-text-subtle/60',
+          'focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary',
+          error && 'border-danger focus:ring-danger focus:border-danger',
           className
         )}
         {...props}
@@ -109,11 +111,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       <select
         ref={ref}
         className={cn(
-          'w-full min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm transition-all appearance-none cursor-pointer',
-          'bg-white dark:bg-[#0A1128] text-[#0A1128] dark:text-[#F4F7FB]',
-          'border border-[#D8E0EE] dark:border-[#22305A]',
-          'focus:outline-none focus:ring-2 focus:ring-[#2DD4BF] focus:border-transparent',
-          error && 'border-red-500 focus:ring-red-500',
+          'w-full h-9 px-3 rounded-lg text-xs transition-colors appearance-none cursor-pointer',
+          'bg-surface text-text border border-border',
+          'focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary',
+          error && 'border-danger focus:ring-danger focus:border-danger',
           className
         )}
         {...props}

@@ -2,44 +2,69 @@ import React from 'react';
 import { cn } from './utils';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'product' | 'portfolio' | 'client' | 'status-green' | 'status-amber' | 'status-blue';
+  variant?:
+    | 'default'
+    | 'product'
+    | 'portfolio'
+    | 'client'
+    | 'status-green'
+    | 'status-amber'
+    | 'status-blue';
   size?: 'sm' | 'md';
+  showDot?: boolean;
 }
 
 export const Badge: React.FC<BadgeProps> = ({
   className,
   variant = 'default',
   size = 'md',
+  showDot = true,
   children,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center font-mono font-medium rounded-full select-none';
+  const baseStyles = 'inline-flex items-center font-mono font-medium rounded-full select-none transition-colors border';
+
+  const dotColors = {
+    default: 'bg-text-subtle',
+    product: 'bg-indigo-400',
+    portfolio: 'bg-emerald-400',
+    client: 'bg-sky-400',
+    'status-green': 'bg-emerald-400',
+    'status-amber': 'bg-amber-400',
+    'status-blue': 'bg-blue-400',
+  };
 
   const variants = {
     default:
-      'bg-[#F4F7FB] dark:bg-[#131F42] text-[#4A5878] dark:text-[#A9B6D3] border border-[#D8E0EE] dark:border-[#22305A]',
+      'bg-surface-hover/80 text-text-muted border-border',
     product:
-      'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30',
+      'bg-indigo-500/10 text-indigo-400 dark:text-indigo-300 border-indigo-500/20',
     portfolio:
-      'bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30',
+      'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/20',
     client:
-      'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30',
+      'bg-sky-500/10 text-sky-500 dark:text-sky-400 border-sky-500/20',
     'status-green':
-      'bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/30',
+      'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/20',
     'status-amber':
-      'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30',
+      'bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/20',
     'status-blue':
-      'bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/30',
+      'bg-blue-500/10 text-blue-500 dark:text-blue-400 border-blue-500/20',
   };
 
   const sizes = {
-    sm: 'text-xs px-2.5 py-0.5 gap-1',
-    md: 'text-xs px-3 py-1 gap-1.5',
+    sm: 'text-[10px] px-2 py-0.5 gap-1.5 leading-none',
+    md: 'text-[11px] px-2.5 py-1 gap-1.5 leading-none',
   };
 
   return (
     <span className={cn(baseStyles, variants[variant], sizes[size], className)} {...props}>
-      {children}
+      {showDot && (
+        <span
+          className={cn('w-1.5 h-1.5 rounded-full shrink-0', dotColors[variant])}
+          aria-hidden="true"
+        />
+      )}
+      <span>{children}</span>
     </span>
   );
 };

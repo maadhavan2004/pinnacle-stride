@@ -2,10 +2,19 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Logo } from '@ps/ui';
-import { LayoutDashboard, Inbox, FolderKanban, Boxes, Users, Settings, LogOut, ArrowLeft } from 'lucide-react';
+import {
+  Inbox,
+  FolderKanban,
+  Boxes,
+  Users,
+  ArrowLeft,
+  ExternalLink,
+  Shield,
+  Activity,
+} from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Admin Portal — PinnacleStride',
+  title: 'Operations Dashboard — PinnacleStride Admin',
   robots: {
     index: false,
     follow: false,
@@ -14,82 +23,109 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#F4F7FB] dark:bg-[#0A1128] text-[#0A1128] dark:text-[#F4F7FB] flex flex-col">
-      {/* Admin Top Navigation */}
-      <header className="h-16 border-b border-[#D8E0EE] dark:border-[#22305A] bg-white dark:bg-[#131F42] px-6 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link href="/admin">
+    <div className="min-h-screen bg-bg text-text flex flex-col font-sans">
+      {/* Sleek Top Bar (Linear / Raycast style) */}
+      <header className="h-12 border-b border-border bg-surface/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
+        <div className="flex items-center gap-4">
+          <Link href="/admin" className="focus-visible:ring-1 rounded">
             <Logo size="sm" showText={true} />
           </Link>
-          <span className="text-xs font-mono uppercase tracking-wider px-2.5 py-1 rounded bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] font-semibold">
-            Operations Backoffice
-          </span>
+          <div className="h-3.5 w-px bg-border" />
+          <div className="flex items-center gap-1.5 text-xs text-text-muted">
+            <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-surface-hover border border-border text-text">
+              control-plane
+            </span>
+            <span className="text-text-subtle">/</span>
+            <span className="text-text font-medium text-xs">triage</span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs">
+        <div className="flex items-center gap-3 text-xs">
+          <div className="hidden sm:flex items-center gap-1.5 font-mono text-[11px] text-text-subtle">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>API Live</span>
+          </div>
+          <div className="h-3.5 w-px bg-border hidden sm:block" />
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-[#4A5878] dark:text-[#A9B6D3] hover:text-[#0A1128] dark:hover:text-[#F4F7FB]"
+            className="flex items-center gap-1 text-text-muted hover:text-text transition-colors text-xs"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
             <span>Public Site</span>
+            <ExternalLink className="w-3 h-3 opacity-60" />
           </Link>
-          <div className="h-4 w-px bg-[#D8E0EE] dark:border-[#22305A]" />
-          <span className="font-mono text-[#0EA5A4] dark:text-[#2DD4BF]">admin@pinnaclestride.com</span>
+          <div className="h-3.5 w-px bg-border" />
+          <div className="flex items-center gap-1.5 text-xs font-mono text-text-muted">
+            <Shield className="w-3.5 h-3.5 text-primary" />
+            <span className="hidden md:inline">OWNER</span>
+          </div>
         </div>
       </header>
 
-      {/* Admin Workspace */}
+      {/* Workspace */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar */}
-        <aside className="w-64 border-r border-[#D8E0EE] dark:border-[#22305A] bg-white dark:bg-[#131F42] p-4 hidden md:flex flex-col justify-between">
-          <nav className="space-y-1.5">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-[#4A5878] dark:text-[#A9B6D3] px-3 py-2">
-              Management
+        <aside className="w-56 border-r border-border bg-bg-subtle/50 p-3 hidden md:flex flex-col justify-between shrink-0">
+          <nav className="space-y-1">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-text-subtle px-2.5 py-1.5">
+              Workspace
             </div>
 
             <Link
               href="/admin"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-[#F4F7FB] dark:hover:bg-[#0A1128] text-[#1D4ED8] dark:text-[#3B82F6] bg-[#1D4ED8]/10 dark:bg-[#3B82F6]/10"
+              className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium bg-surface text-text border border-border shadow-xs transition-colors"
             >
-              <Inbox className="w-4 h-4" />
-              <span>Inquiries Triage</span>
+              <div className="flex items-center gap-2.5">
+                <Inbox className="w-3.5 h-3.5 text-primary" />
+                <span>Inquiries Triage</span>
+              </div>
+              <span className="text-[10px] font-mono text-text-subtle">⌘1</span>
             </Link>
 
             <Link
               href="/projects"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#4A5878] dark:text-[#A9B6D3] hover:bg-[#F4F7FB] dark:hover:bg-[#0A1128]"
+              className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium text-text-muted hover:text-text hover:bg-surface transition-colors"
             >
-              <FolderKanban className="w-4 h-4" />
-              <span>Portfolio & Projects</span>
+              <div className="flex items-center gap-2.5">
+                <FolderKanban className="w-3.5 h-3.5" />
+                <span>Portfolio</span>
+              </div>
             </Link>
 
             <Link
               href="/products"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#4A5878] dark:text-[#A9B6D3] hover:bg-[#F4F7FB] dark:hover:bg-[#0A1128]"
+              className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium text-text-muted hover:text-text hover:bg-surface transition-colors"
             >
-              <Boxes className="w-4 h-4" />
-              <span>Products Catalog</span>
+              <div className="flex items-center gap-2.5">
+                <Boxes className="w-3.5 h-3.5" />
+                <span>Products</span>
+              </div>
             </Link>
 
             <Link
               href="/about#team"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#4A5878] dark:text-[#A9B6D3] hover:bg-[#F4F7FB] dark:hover:bg-[#0A1128]"
+              className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium text-text-muted hover:text-text hover:bg-surface transition-colors"
             >
-              <Users className="w-4 h-4" />
-              <span>Team Profiles</span>
+              <div className="flex items-center gap-2.5">
+                <Users className="w-3.5 h-3.5" />
+                <span>Team</span>
+              </div>
             </Link>
           </nav>
 
-          <div className="pt-4 border-t border-[#D8E0EE] dark:border-[#22305A]">
-            <div className="text-[11px] font-mono text-[#4A5878] dark:text-[#A9B6D3] px-3 py-1">
-              Role: <span className="font-bold text-[#2DD4BF]">OWNER</span>
+          <div className="p-2.5 rounded-lg border border-border bg-surface/50 text-[11px] space-y-1">
+            <div className="text-text-subtle flex items-center justify-between">
+              <span>Environment</span>
+              <span className="font-mono text-emerald-500 font-semibold">dev</span>
+            </div>
+            <div className="text-text-subtle flex items-center justify-between">
+              <span>Latency</span>
+              <span className="font-mono text-text">14ms</span>
             </div>
           </div>
         </aside>
 
-        {/* Main Admin View */}
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

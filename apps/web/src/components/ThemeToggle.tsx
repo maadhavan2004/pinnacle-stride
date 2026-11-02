@@ -14,7 +14,6 @@ export const ThemeToggle: React.FC = () => {
       setTheme(stored);
       document.documentElement.classList.toggle('dark', stored === 'dark');
     } else {
-      // Default to dark palette
       setTheme('dark');
       document.documentElement.classList.add('dark');
     }
@@ -28,7 +27,7 @@ export const ThemeToggle: React.FC = () => {
   };
 
   if (!mounted) {
-    return <div className="w-10 h-10" aria-hidden="true" />;
+    return <div className="w-8 h-8" aria-hidden="true" />;
   }
 
   return (
@@ -36,12 +35,12 @@ export const ThemeToggle: React.FC = () => {
       type="button"
       onClick={toggleTheme}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-      className="p-2.5 rounded-lg border border-[#D8E0EE] dark:border-[#22305A] bg-[#F4F7FB] dark:bg-[#131F42] text-[#0A1128] dark:text-[#F4F7FB] hover:border-[#1D4ED8] dark:hover:border-[#3B82F6] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+      className="w-8 h-8 rounded-md flex items-center justify-center text-text-muted hover:text-text hover:bg-surface-hover transition-colors border border-transparent hover:border-border"
     >
       {theme === 'dark' ? (
-        <Sun className="w-4 h-4 text-[#2DD4BF]" aria-hidden="true" />
+        <Sun className="w-3.5 h-3.5 text-text-subtle hover:text-text transition-colors" aria-hidden="true" />
       ) : (
-        <Moon className="w-4 h-4 text-[#1D4ED8]" aria-hidden="true" />
+        <Moon className="w-3.5 h-3.5 text-text-subtle hover:text-text transition-colors" aria-hidden="true" />
       )}
     </button>
   );

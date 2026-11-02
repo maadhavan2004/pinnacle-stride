@@ -14,14 +14,50 @@
     color: var(--text);
   }
 
-  /* Accessible focus indicators per Document 4 §4.7 */
+  /* Accessible focus indicators */
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
+  }
+
+  /* Custom subtle scrollbars like Raycast/Linear */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-subtle);
   }
 }
 
-/* Reduced motion preference support per Document 4 §4.7 */
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Subtle background grid pattern for high-end SaaS feel */
+  .bg-grid-subtle {
+    background-size: 32px 32px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+
+  .light .bg-grid-subtle {
+    background-image: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  }
+}
+
+/* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

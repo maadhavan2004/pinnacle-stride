@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge } from '@ps/ui';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Button, Badge } from '@ps/ui';
 import {
   InquiryStatus,
   InquiryStatusEnum,
@@ -12,7 +12,6 @@ import {
 import {
   Download,
   Search,
-  Filter,
   CheckCircle,
   MessageSquare,
   Clock,
@@ -20,6 +19,14 @@ import {
   User,
   Building,
   RefreshCw,
+  Mail,
+  Copy,
+  Check,
+  TrendingUp,
+  Inbox,
+  AlertCircle,
+  ChevronRight,
+  Filter,
 } from 'lucide-react';
 
 interface InquiryRecord {
@@ -43,8 +50,9 @@ export default function AdminInquiriesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [newNote, setNewNote] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [copiedId, setCopiedId] = useState(false);
 
-  // Load inquiries (from API or local storage fallback)
+  // Fetch inquiries from API with fallback to local storage
   const fetchInquiries = async () => {
     setIsLoading(true);
     try {
@@ -52,18 +60,18 @@ export default function AdminInquiriesPage() {
       const res = await fetch(`${apiUrl}/inquiries/admin`);
       if (res.ok) {
         const data = await res.json();
-        setInquiries(data.items || []);
-        if (data.items?.length > 0 && !selectedInquiry) {
-          setSelectedInquiry(data.items[0]);
+        const items = data.items || [];
+        setInquiries(items);
+        if (items.length > 0 && !selectedInquiry) {
+          setSelectedInquiry(items[0]);
         }
         setIsLoading(false);
         return;
       }
     } catch {
-      // Fallback to local storage seeded records
+      // Local fallback
     }
 
-    // Default mock data if API is currently not running in background
     const local = JSON.parse(localStorage.getItem('ps_local_inquiries') || '[]');
     const initialSeed: InquiryRecord[] = [
       {
@@ -77,7 +85,7 @@ export default function AdminInquiriesPage() {
         message:
           'We require an enterprise internal RAG assistant to query compliance documentation and financial audit guidelines with deterministic citations and zero hallucination risk.',
         status: 'NEW',
-        createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
+        createdAt: new Date(Date.now() - 3600000 * 3).toISOString(),
         notes: [
           {
             id: 'n-1',
@@ -128,6 +136,16 @@ export default function AdminInquiriesPage() {
   useEffect(() => {
     fetchInquiries();
   }, []);
+
+  // Compute real metrics from loaded data
+  const metrics = useMemo(() => {
+    const total = inquiries.filter((i) => i.status !== 'SPAM').length;
+    const newCount = inquiries.filter((i) => i.status === 'NEW').length;
+    const contactedCount = inquiries.filter((i) => i.status === 'CONTACTED').length;
+    const qualifiedCount = inquiries.filter((i) => i.status === 'QUALIFIED').length;
+    const wonCount = inquiries.filter((i) => i.status === 'WON').length;
+    return { total, newCount, contactedCount, qualifiedCount, wonCount };
+  }, [inquiries]);
 
   const handleStatusChange = async (newStatus: InquiryStatus) => {
     if (!selectedInquiry) return;
@@ -180,9 +198,16 @@ export default function AdminInquiriesPage() {
     setNewNote('');
   };
 
+  const handleCopyEmail = () => {
+    if (!selectedInquiry) return;
+    navigator.clipboard.writeText(selectedInquiry.email);
+    setCopiedId(true);
+    setTimeout(() => setCopiedId(false), 1500);
+  };
+
   const handleExportCsv = () => {
     const valid = inquiries.filter((iq) => iq.status !== 'SPAM');
-    const headers = ['ID', 'Date', 'Full Name', 'Email', 'Company', 'Service', 'Budget', 'Timeline', 'Status', 'Message'];
+    const headers = ['ID', 'Date (UTC)', 'Full Name', 'Email', 'Company', 'Service', 'Budget', 'Timeline', 'Status', 'Message'];
     const rows = valid.map((iq) => [
       iq.id,
       iq.createdAt,
@@ -200,7 +225,7 @@ export default function AdminInquiriesPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `pinnaclestride_inquiries_${Date.now()}.csv`);
+    link.setAttribute('download', `pinnaclestride_leads_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -218,88 +243,135 @@ export default function AdminInquiriesPage() {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Top Banner Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#0A1128] dark:text-[#F4F7FB]">
-            Inquiries Triage & Leads
-          </h1>
-          <p className="text-xs text-[#4A5878] dark:text-[#A9B6D3]">
-            Review, evaluate, and manage inbound project requirements in real time.
-          </p>
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* 1. Metric Overview Bar (Stripe / Linear KPI Cards) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-xs space-y-1">
+          <div className="text-[11px] font-mono text-text-subtle uppercase tracking-wider flex items-center justify-between">
+            <span>Total Inquiries</span>
+            <Inbox className="w-3.5 h-3.5 text-text-subtle" />
+          </div>
+          <div className="text-2xl font-bold font-mono tracking-tight text-text">
+            {metrics.total}
+          </div>
+          <div className="text-[11px] text-text-subtle">Excluding spam entries</div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button size="sm" variant="secondary" onClick={fetchInquiries} disabled={isLoading}>
-            <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button size="sm" variant="primary" onClick={handleExportCsv}>
-            <Download className="w-3.5 h-3.5 mr-1.5" />
-            Export CSV
-          </Button>
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-xs space-y-1">
+          <div className="text-[11px] font-mono text-text-subtle uppercase tracking-wider flex items-center justify-between">
+            <span>Awaiting Triage</span>
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          </div>
+          <div className="text-2xl font-bold font-mono tracking-tight text-blue-500">
+            {metrics.newCount}
+          </div>
+          <div className="text-[11px] text-text-subtle">Status: NEW</div>
+        </div>
+
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-xs space-y-1">
+          <div className="text-[11px] font-mono text-text-subtle uppercase tracking-wider flex items-center justify-between">
+            <span>Qualified Pipeline</span>
+            <TrendingUp className="w-3.5 h-3.5 text-amber-500" />
+          </div>
+          <div className="text-2xl font-bold font-mono tracking-tight text-text">
+            {metrics.qualifiedCount}
+          </div>
+          <div className="text-[11px] text-text-subtle">Ready for proposal</div>
+        </div>
+
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-xs space-y-1">
+          <div className="text-[11px] font-mono text-text-subtle uppercase tracking-wider flex items-center justify-between">
+            <span>Milestones Won</span>
+            <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+          </div>
+          <div className="text-2xl font-bold font-mono tracking-tight text-emerald-500">
+            {metrics.wonCount}
+          </div>
+          <div className="text-[11px] text-text-subtle">Active engagements</div>
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] flex flex-col md:flex-row gap-4 items-center justify-between">
+      {/* 2. Action & Filter Bar */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-2">
         {/* Search */}
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#4A5878] dark:text-[#A9B6D3]" />
+        <div className="relative flex-1 max-w-md">
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-text-subtle" />
           <input
             type="text"
-            placeholder="Search leads..."
+            placeholder="Search leads by name, email, company, keyword..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-lg text-xs bg-[#F4F7FB] dark:bg-[#0A1128] border border-[#D8E0EE] dark:border-[#22305A] text-[#0A1128] dark:text-[#F4F7FB] focus:outline-none focus:ring-2 focus:ring-[#2DD4BF]"
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg text-xs bg-surface border border-border text-text placeholder:text-text-subtle focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
 
-        {/* Status Filter Pills */}
-        <div className="flex flex-wrap gap-1.5 w-full md:w-auto">
-          {['ALL', ...InquiryStatusEnum.options].map((st) => (
-            <button
-              key={st}
-              type="button"
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1 rounded-full text-xs font-mono transition-colors ${
-                statusFilter === st
-                  ? 'bg-[#1D4ED8] dark:bg-[#3B82F6] text-white font-semibold'
-                  : 'bg-[#F4F7FB] dark:bg-[#0A1128] text-[#4A5878] dark:text-[#A9B6D3] hover:text-[#0A1128] dark:hover:text-[#F4F7FB]'
-              }`}
-            >
-              {st}
-            </button>
-          ))}
+        {/* Filter Pills & Actions */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+          <div className="flex items-center p-0.5 rounded-lg border border-border bg-surface text-xs font-mono">
+            {['ALL', 'NEW', 'QUALIFIED', 'WON', 'SPAM'].map((st) => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => setStatusFilter(st)}
+                className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
+                  statusFilter === st
+                    ? 'bg-text text-bg font-medium shadow-xs'
+                    : 'text-text-muted hover:text-text'
+                }`}
+              >
+                {st}
+              </button>
+            ))}
+          </div>
+
+          <Button size="sm" variant="secondary" onClick={fetchInquiries} disabled={isLoading} className="text-xs">
+            <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
+          </Button>
+
+          <Button size="sm" variant="secondary" onClick={handleExportCsv} className="text-xs">
+            <Download className="w-3 h-3 mr-1.5" />
+            CSV
+          </Button>
         </div>
       </div>
 
-      {/* Split Pane: List on Left, Detail & Notes on Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Inquiries Table / Cards (5 cols) */}
-        <div className="lg:col-span-5 space-y-3">
-          <div className="text-xs font-mono text-[#4A5878] dark:text-[#A9B6D3] px-1">
-            Showing {filteredInquiries.length} inquiries
+      {/* 3. Split-Pane Triage View */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* Left: Triage List (5 cols) */}
+        <div className="lg:col-span-5 space-y-2">
+          <div className="text-[11px] font-mono text-text-subtle px-1 flex items-center justify-between">
+            <span>Queue ({filteredInquiries.length})</span>
+            <span>Sorted by Recent</span>
           </div>
 
-          <div className="space-y-2.5 max-h-[750px] overflow-y-auto pr-1">
+          <div className="space-y-1.5 max-h-[640px] overflow-y-auto pr-1">
             {filteredInquiries.map((iq) => {
               const isSelected = selectedInquiry?.id === iq.id;
+              const dateStr = new Date(iq.createdAt).toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+              });
+
               return (
                 <div
                   key={iq.id}
                   onClick={() => setSelectedInquiry(iq)}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all ${
+                  className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                     isSelected
-                      ? 'border-[#1D4ED8] dark:border-[#3B82F6] bg-white dark:bg-[#131F42] shadow-md ring-1 ring-[#1D4ED8]'
-                      : 'border-[#D8E0EE] dark:border-[#22305A] bg-white/70 dark:bg-[#131F42]/60 hover:bg-white dark:hover:bg-[#131F42]'
+                      ? 'border-primary/80 bg-surface shadow-xs ring-1 ring-primary/40'
+                      : 'border-border bg-surface/60 hover:bg-surface hover:border-text-subtle/30'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="font-bold text-sm text-[#0A1128] dark:text-[#F4F7FB]">
-                      {iq.fullName}
-                    </span>
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-surface-hover border border-border text-[11px] font-semibold text-text flex items-center justify-center">
+                        {iq.fullName[0]}
+                      </div>
+                      <span className="font-medium text-xs text-text truncate max-w-[140px]">
+                        {iq.fullName}
+                      </span>
+                    </div>
+
                     <Badge
                       variant={
                         iq.status === 'NEW'
@@ -316,60 +388,75 @@ export default function AdminInquiriesPage() {
                     </Badge>
                   </div>
 
-                  <div className="text-xs text-[#0EA5A4] dark:text-[#2DD4BF] font-mono mb-1 truncate">
-                    {ServiceTypeLabels[iq.serviceType as keyof typeof ServiceTypeLabels] || iq.serviceType}
+                  <div className="text-[11px] font-mono text-text-subtle mb-1 truncate">
+                    {iq.company || 'Direct Client'} ·{' '}
+                    <span className="text-text-muted">
+                      {ServiceTypeLabels[iq.serviceType as keyof typeof ServiceTypeLabels] || iq.serviceType}
+                    </span>
                   </div>
 
-                  <p className="text-xs text-[#4A5878] dark:text-[#A9B6D3] line-clamp-2 mb-3">
+                  <p className="text-xs text-text-muted line-clamp-2 leading-relaxed">
                     {iq.message}
                   </p>
 
-                  <div className="flex items-center justify-between text-[11px] font-mono text-[#4A5878] dark:text-[#A9B6D3] pt-2 border-t border-[#D8E0EE]/50 dark:border-[#22305A]/50">
-                    <span>{iq.company || 'Individual'}</span>
-                    <span>{new Date(iq.createdAt).toLocaleDateString()}</span>
+                  <div className="mt-2 pt-2 border-t border-border/40 flex items-center justify-between text-[10px] font-mono text-text-subtle">
+                    <span>{BudgetRangeLabels[iq.budget as keyof typeof BudgetRangeLabels] || iq.budget}</span>
+                    <span>{dateStr}</span>
                   </div>
                 </div>
               );
             })}
 
             {filteredInquiries.length === 0 && (
-              <div className="p-8 text-center text-xs text-[#4A5878] dark:text-[#A9B6D3] bg-white dark:bg-[#131F42] rounded-xl border border-[#D8E0EE] dark:border-[#22305A]">
-                No inquiries matching active filters.
+              <div className="p-8 text-center text-xs text-text-muted rounded-xl border border-dashed border-border bg-surface/30">
+                No inquiries match your current filters.
               </div>
             )}
           </div>
         </div>
 
-        {/* Selected Inquiry Detail & Internal Notes (7 cols) */}
+        {/* Right: Selected Lead Inspector & Notes (7 cols) */}
         <div className="lg:col-span-7">
           {selectedInquiry ? (
-            <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] space-y-6 shadow-sm">
-              {/* Header & Status Selector */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8E0EE] dark:border-[#22305A]">
-                <div>
-                  <h2 className="text-xl font-bold text-[#0A1128] dark:text-[#F4F7FB]">
-                    {selectedInquiry.fullName}
-                  </h2>
-                  <div className="flex items-center gap-3 text-xs text-[#4A5878] dark:text-[#A9B6D3] mt-1">
-                    <a href={`mailto:${selectedInquiry.email}`} className="text-[#1D4ED8] dark:text-[#3B82F6] hover:underline font-mono">
-                      {selectedInquiry.email}
+            <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-xs space-y-5">
+              {/* Lead Header */}
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-border">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base font-semibold text-text">
+                      {selectedInquiry.fullName}
+                    </h2>
+                    <Badge variant="default" size="sm">
+                      {selectedInquiry.company || 'Individual'}
+                    </Badge>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs">
+                    <a
+                      href={`mailto:${selectedInquiry.email}`}
+                      className="font-mono text-primary hover:underline flex items-center gap-1"
+                    >
+                      <Mail className="w-3 h-3" />
+                      <span>{selectedInquiry.email}</span>
                     </a>
-                    {selectedInquiry.company && (
-                      <>
-                        <span>·</span>
-                        <span>{selectedInquiry.company}</span>
-                      </>
-                    )}
+                    <button
+                      type="button"
+                      onClick={handleCopyEmail}
+                      aria-label="Copy email"
+                      className="text-text-subtle hover:text-text p-1 rounded"
+                    >
+                      {copiedId ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                    </button>
                   </div>
                 </div>
 
-                {/* Status Changer */}
+                {/* Status Selector */}
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-[#4A5878] dark:text-[#A9B6D3]">Status:</span>
+                  <span className="text-[11px] font-mono text-text-subtle">State:</span>
                   <select
                     value={selectedInquiry.status}
                     onChange={(e) => handleStatusChange(e.target.value as InquiryStatus)}
-                    className="text-xs font-mono font-semibold px-3 py-1.5 rounded-lg bg-[#F4F7FB] dark:bg-[#0A1128] border border-[#D8E0EE] dark:border-[#22305A] text-[#0A1128] dark:text-[#F4F7FB] focus:outline-none focus:ring-2 focus:ring-[#2DD4BF]"
+                    className="h-8 px-2.5 rounded-md bg-surface-hover border border-border text-xs font-mono font-medium text-text focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
                   >
                     {InquiryStatusEnum.options.map((st) => (
                       <option key={st} value={st}>
@@ -380,47 +467,47 @@ export default function AdminInquiriesPage() {
                 </div>
               </div>
 
-              {/* Requirement Specifications */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-[#F4F7FB] dark:bg-[#0A1128] border border-[#D8E0EE] dark:border-[#22305A] text-xs">
+              {/* Requirement Specifications Grid */}
+              <div className="grid grid-cols-3 gap-3 p-3.5 rounded-lg bg-bg-subtle border border-border text-xs font-mono">
                 <div>
-                  <div className="text-[11px] font-mono text-[#4A5878] dark:text-[#A9B6D3]">Service</div>
-                  <div className="font-semibold text-[#0A1128] dark:text-[#F4F7FB] mt-0.5">
+                  <div className="text-[10px] text-text-subtle uppercase">Target Solution</div>
+                  <div className="font-medium text-text mt-0.5 truncate">
                     {ServiceTypeLabels[selectedInquiry.serviceType as keyof typeof ServiceTypeLabels] || selectedInquiry.serviceType}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-mono text-[#4A5878] dark:text-[#A9B6D3]">Budget</div>
-                  <div className="font-semibold text-[#0A1128] dark:text-[#F4F7FB] mt-0.5">
+                  <div className="text-[10px] text-text-subtle uppercase">Indicative Budget</div>
+                  <div className="font-medium text-text mt-0.5 truncate">
                     {BudgetRangeLabels[selectedInquiry.budget as keyof typeof BudgetRangeLabels] || selectedInquiry.budget}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-mono text-[#4A5878] dark:text-[#A9B6D3]">Target Timeline</div>
-                  <div className="font-semibold text-[#0A1128] dark:text-[#F4F7FB] mt-0.5">
+                  <div className="text-[10px] text-text-subtle uppercase">Timeline</div>
+                  <div className="font-medium text-text mt-0.5 truncate">
                     {TimelineOptionLabels[selectedInquiry.timeline as keyof typeof TimelineOptionLabels] || selectedInquiry.timeline}
                   </div>
                 </div>
               </div>
 
-              {/* Inquiry Message */}
-              <div className="space-y-2">
-                <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#0A1128] dark:text-[#F4F7FB]">
-                  Submitted Requirements:
+              {/* Inbound Requirements Message */}
+              <div className="space-y-1.5">
+                <div className="text-[11px] font-mono uppercase tracking-wider text-text-subtle">
+                  Submitted Requirements
                 </div>
-                <div className="p-4 rounded-xl bg-white dark:bg-[#0A1128]/50 border border-[#D8E0EE] dark:border-[#22305A] text-sm text-[#0A1128] dark:text-[#F4F7FB] whitespace-pre-wrap leading-relaxed">
+                <div className="p-3.5 rounded-lg bg-surface-hover/50 border border-border text-xs text-text leading-relaxed whitespace-pre-wrap font-sans">
                   {selectedInquiry.message}
                 </div>
               </div>
 
-              {/* Internal Notes Section (FR-81) */}
-              <div className="space-y-4 pt-4 border-t border-[#D8E0EE] dark:border-[#22305A]">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[#0A1128] dark:text-[#F4F7FB] flex items-center gap-1.5">
-                    <MessageSquare className="w-4 h-4 text-[#0EA5A4] dark:text-[#2DD4BF]" />
-                    Internal Team Notes & Next Steps
-                  </h3>
-                  <span className="text-xs font-mono text-[#4A5878] dark:text-[#A9B6D3]">
-                    {selectedInquiry.notes?.length || 0} notes
+              {/* Internal Notes & Follow-up Trail */}
+              <div className="space-y-3 pt-3 border-t border-border">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 font-medium text-text">
+                    <MessageSquare className="w-3.5 h-3.5 text-primary" />
+                    <span>Internal Activity & Notes</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-text-subtle">
+                    {selectedInquiry.notes?.length || 0} entries
                   </span>
                 </div>
 
@@ -428,10 +515,10 @@ export default function AdminInquiriesPage() {
                 <form onSubmit={handleAddNote} className="space-y-2">
                   <textarea
                     rows={2}
-                    placeholder="Add an internal note or action item (e.g. 'Sent discovery calendar link')..."
+                    placeholder="Log team feedback, qualification notes, or call reminders..."
                     value={newNote}
                     onChange={(e) => setNewNote(e.target.value)}
-                    className="w-full p-3 rounded-lg text-xs bg-[#F4F7FB] dark:bg-[#0A1128] border border-[#D8E0EE] dark:border-[#22305A] text-[#0A1128] dark:text-[#F4F7FB] focus:outline-none focus:ring-2 focus:ring-[#2DD4BF]"
+                    className="w-full p-2.5 rounded-lg text-xs bg-bg-subtle border border-border text-text placeholder:text-text-subtle focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                   <div className="flex justify-end">
                     <Button type="submit" size="sm" variant="primary" disabled={!newNote.trim()}>
@@ -441,28 +528,26 @@ export default function AdminInquiriesPage() {
                   </div>
                 </form>
 
-                {/* Notes History */}
-                <div className="space-y-2.5 pt-2">
+                {/* Existing Notes */}
+                <div className="space-y-2 pt-1 max-h-48 overflow-y-auto">
                   {selectedInquiry.notes?.map((n) => (
                     <div
                       key={n.id}
-                      className="p-3 rounded-lg bg-[#F4F7FB] dark:bg-[#0A1128] border border-[#D8E0EE] dark:border-[#22305A] text-xs space-y-1"
+                      className="p-2.5 rounded-lg bg-surface-hover/70 border border-border text-xs space-y-1"
                     >
-                      <div className="flex items-center justify-between text-[11px] font-mono text-[#4A5878] dark:text-[#A9B6D3]">
-                        <span className="font-semibold text-[#0A1128] dark:text-[#F4F7FB]">
-                          {n.authorName || 'Admin'}
-                        </span>
+                      <div className="flex items-center justify-between text-[10px] font-mono text-text-subtle">
+                        <span className="font-semibold text-text">{n.authorName || 'Admin'}</span>
                         <span>{new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
-                      <p className="text-[#4A5878] dark:text-[#A9B6D3]">{n.body}</p>
+                      <p className="text-text-muted text-xs leading-relaxed">{n.body}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="p-12 text-center text-xs text-[#4A5878] dark:text-[#A9B6D3] bg-white dark:bg-[#131F42] rounded-2xl border border-[#D8E0EE] dark:border-[#22305A]">
-              Select an inquiry from the left to view requirements and triage.
+            <div className="p-12 text-center text-xs text-text-muted border border-border rounded-xl bg-surface/50">
+              Select an inquiry to view details and triage.
             </div>
           )}
         </div>

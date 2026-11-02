@@ -13,36 +13,36 @@ export default function CookiesPage() {
   const doc = legalDocuments.cookies!;
 
   return (
-    <div className="py-12 sm:py-20">
+    <div className="py-12 sm:py-16">
       <Container size="narrow">
-        <div className="space-y-6 pb-10 border-b border-[#D8E0EE] dark:border-[#22305A]">
-          <span className="text-xs font-mono uppercase tracking-wider text-[#0EA5A4] dark:text-[#2DD4BF] font-semibold">
+        <div className="space-y-4 pb-8 border-b border-border">
+          <span className="text-xs font-mono uppercase tracking-wider text-text-subtle font-semibold">
             Digital Privacy
           </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0A1128] dark:text-[#F4F7FB]">
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-text">
             {doc.title}
           </h1>
-          <div className="text-xs font-mono text-[#4A5878] dark:text-[#A9B6D3]">
+          <div className="text-xs font-mono text-text-muted">
             Last Updated: {doc.lastUpdated}
           </div>
 
-          <div className="p-5 rounded-2xl bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] border border-[#1D4ED8]/25 text-sm leading-relaxed flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-xl bg-surface border border-border text-xs leading-relaxed flex items-start gap-3 shadow-xs">
+            <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold">Plain-Language Summary: </span>
-              {doc.summary}
+              <span className="font-semibold text-text">Plain-Language Summary: </span>
+              <span className="text-text-muted">{doc.summary}</span>
             </div>
           </div>
         </div>
 
         {/* Sections */}
-        <div className="py-10 space-y-10">
+        <div className="py-8 space-y-8">
           {doc.sections.map((section, idx) => (
-            <div key={idx} className="space-y-3">
-              <h2 className="text-xl font-bold text-[#0A1128] dark:text-[#F4F7FB]">
+            <div key={idx} className="space-y-2">
+              <h2 className="text-base sm:text-lg font-semibold text-text">
                 {section.heading}
               </h2>
-              <p className="text-sm sm:text-base text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed whitespace-pre-line">
+              <p className="text-xs sm:text-sm text-text-muted leading-relaxed whitespace-pre-line">
                 {section.content}
               </p>
             </div>

@@ -16,28 +16,28 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="py-24 sm:py-32 flex items-center justify-center">
+    <div className="py-20 sm:py-28 flex items-center justify-center">
       <Container size="narrow">
-        <div className="text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto">
-            <AlertTriangle className="w-8 h-8" />
+        <div className="text-center space-y-5">
+          <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center mx-auto shadow-xs">
+            <AlertTriangle className="w-5 h-5" />
           </div>
 
-          <span className="font-mono text-xs uppercase tracking-wider text-red-600 dark:text-red-400 font-semibold">
-            System Error
+          <span className="font-mono text-xs uppercase tracking-wider text-red-500 font-medium">
+            500 · System Error
           </span>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0A1128] dark:text-[#F4F7FB]">
-            Something unexpected occurred.
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+            Something unexpected occurred
           </h1>
 
-          <p className="text-sm sm:text-base text-[#4A5878] dark:text-[#A9B6D3] max-w-md mx-auto leading-relaxed">
-            Our team has been automatically alerted through our error telemetry. Please try reloading this section.
+          <p className="text-xs sm:text-sm text-text-muted max-w-sm mx-auto leading-relaxed">
+            Our telemetry has automatically logged this incident. You can try refreshing the current view.
           </p>
 
-          <div className="pt-4 flex items-center justify-center gap-4">
-            <Button size="md" variant="primary" onClick={() => reset()}>
-              <RefreshCw className="w-4 h-4 mr-2" />
+          <div className="pt-2 flex items-center justify-center gap-3">
+            <Button size="sm" variant="primary" onClick={() => reset()}>
+              <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
               Try Again
             </Button>
           </div>

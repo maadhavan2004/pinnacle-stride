@@ -1,44 +1,46 @@
 import React from 'react';
 import Link from 'next/link';
 import { Container, Button } from '@ps/ui';
-import { ArrowLeft, Compass, Home } from 'lucide-react';
+import { Compass, Home, PhoneCall, Layers } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="py-24 sm:py-32 flex items-center justify-center">
+    <div className="py-20 sm:py-28 flex items-center justify-center">
       <Container size="narrow">
-        <div className="text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] flex items-center justify-center mx-auto">
-            <Compass className="w-8 h-8" />
+        <div className="text-center space-y-5">
+          <div className="w-12 h-12 rounded-xl bg-surface border border-border text-text-subtle flex items-center justify-center mx-auto shadow-xs">
+            <Compass className="w-5 h-5 text-primary" />
           </div>
 
-          <span className="font-mono text-xs uppercase tracking-wider text-[#0EA5A4] dark:text-[#2DD4BF] font-semibold">
-            Error 404 · Page Not Found
+          <span className="font-mono text-xs uppercase tracking-wider text-text-subtle font-medium">
+            404 · Resource Not Found
           </span>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0A1128] dark:text-[#F4F7FB]">
-            Lost in the Codebase?
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+            Page does not exist
           </h1>
 
-          <p className="text-sm sm:text-base text-[#4A5878] dark:text-[#A9B6D3] max-w-md mx-auto leading-relaxed">
-            The route or resource you are looking for has been moved, renamed, or does not exist.
+          <p className="text-xs sm:text-sm text-text-muted max-w-sm mx-auto leading-relaxed">
+            The page or resource you are looking for has been moved, renamed, or is unavailable.
           </p>
 
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
             <Link href="/">
-              <Button size="md" variant="primary">
-                <Home className="w-4 h-4 mr-2" />
+              <Button size="sm" variant="primary">
+                <Home className="w-3.5 h-3.5 mr-1.5" />
                 Return Home
               </Button>
             </Link>
             <Link href="/services">
-              <Button size="md" variant="secondary">
-                View Services
+              <Button size="sm" variant="secondary">
+                <Layers className="w-3.5 h-3.5 mr-1.5" />
+                Services
               </Button>
             </Link>
             <Link href="/contact">
-              <Button size="md" variant="outline">
-                Contact Team
+              <Button size="sm" variant="outline">
+                <PhoneCall className="w-3.5 h-3.5 mr-1.5" />
+                Contact
               </Button>
             </Link>
           </div>

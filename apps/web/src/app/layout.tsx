@@ -52,7 +52,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col antialiased selection:bg-[#2DD4BF] selection:text-[#0A1128]">
+      <body className="min-h-screen flex flex-col antialiased selection:bg-primary/20 selection:text-primary">
         <SkipLink />
         <Header />
         <main id="main-content" className="flex-1 w-full">

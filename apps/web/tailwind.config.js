@@ -21,18 +21,28 @@ module.exports = {
       colors: {
         bg: 'var(--bg)',
         'bg-subtle': 'var(--bg-subtle)',
-        surface: 'var(--surface)',
-        text: 'var(--text)',
-        'text-muted': 'var(--text-muted)',
+        surface: {
+          DEFAULT: 'var(--surface)',
+          hover: 'var(--surface-hover)',
+        },
+        text: {
+          DEFAULT: 'var(--text)',
+          muted: 'var(--text-muted)',
+          subtle: 'var(--text-subtle)',
+        },
         primary: {
           DEFAULT: 'var(--primary)',
           hover: 'var(--primary-hover)',
+          fg: 'var(--primary-fg)',
         },
         accent: {
           DEFAULT: 'var(--accent)',
           hover: 'var(--accent-hover)',
         },
-        border: 'var(--border)',
+        border: {
+          DEFAULT: 'var(--border)',
+          subtle: 'var(--border-subtle)',
+        },
         success: 'var(--success)',
         warning: 'var(--warning)',
         danger: 'var(--danger)',
@@ -42,10 +52,25 @@ module.exports = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       borderRadius: {
+        xs: 'var(--radius-xs)',
         sm: 'var(--radius-sm)',
         md: 'var(--radius-md)',
         lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
         full: 'var(--radius-full)',
+      },
+      letterSpacing: {
+        tighter: '-0.03em',
+        tight: '-0.015em',
+        normal: '0',
+        wide: '0.025em',
+        wider: '0.05em',
+        widest: '0.1em',
+      },
+      boxShadow: {
+        sm: 'var(--shadow-sm)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
       },
     },
   },

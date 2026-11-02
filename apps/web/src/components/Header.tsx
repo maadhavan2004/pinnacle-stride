@@ -10,7 +10,7 @@ import { ChevronDown, Menu, X, ArrowRight, Layers, Cpu, Sparkles, Globe, Cloud }
 const serviceLinks = [
   {
     href: '/services/websites-business-solutions',
-    title: 'Websites & Business Solutions',
+    title: 'Websites & Solutions',
     desc: 'High-conversion marketing engines & portals',
     icon: Globe,
   },
@@ -34,7 +34,7 @@ const serviceLinks = [
   },
   {
     href: '/services/cloud-deployment-integrations',
-    title: 'Cloud & Integrations',
+    title: 'Cloud & Infrastructure',
     desc: 'Container topology, automatic TLS & telemetry',
     icon: Cloud,
   },
@@ -42,19 +42,9 @@ const serviceLinks = [
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
     setServicesOpen(false);
@@ -64,26 +54,19 @@ export const Header: React.FC = () => {
     { href: '/products', label: 'Products' },
     { href: '/projects', label: 'Projects' },
     { href: '/about', label: 'About' },
-    { href: '/how-we-work', label: 'How We Work' },
+    { href: '/how-we-work', label: 'Process' },
   ];
 
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-40 w-full transition-all duration-200 border-b',
-        isScrolled
-          ? 'bg-white/90 dark:bg-[#0A1128]/90 backdrop-blur-md border-[#D8E0EE] dark:border-[#22305A] py-3 shadow-sm'
-          : 'bg-transparent border-transparent py-5'
-      )}
-    >
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-bg/85 border-b border-border transition-colors">
+      <div className="max-w-[1140px] mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" aria-label="PinnacleStride Home" className="focus-visible:ring-2 rounded-lg">
-          <Logo size="md" />
+        <Link href="/" aria-label="PinnacleStride Home" className="focus-visible:ring-1 rounded-md">
+          <Logo size="sm" />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1 xl:gap-2" aria-label="Main Navigation">
+        <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
           {/* Services Dropdown */}
           <div
             className="relative"
@@ -95,42 +78,42 @@ export const Header: React.FC = () => {
               onClick={() => setServicesOpen(!servicesOpen)}
               aria-expanded={servicesOpen}
               className={cn(
-                'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px]',
+                'flex items-center gap-1 text-xs font-medium transition-colors py-2',
                 pathname.startsWith('/services')
-                  ? 'text-[#1D4ED8] dark:text-[#3B82F6] font-semibold'
-                  : 'text-[#0A1128] dark:text-[#F4F7FB] hover:text-[#1D4ED8] dark:hover:text-[#3B82F6]'
+                  ? 'text-text font-semibold'
+                  : 'text-text-muted hover:text-text'
               )}
             >
               Services
               <ChevronDown
-                className={cn('w-4 h-4 transition-transform duration-200', servicesOpen && 'rotate-180')}
+                className={cn('w-3 h-3 transition-transform duration-150 opacity-60', servicesOpen && 'rotate-180')}
                 aria-hidden="true"
               />
             </button>
 
-            {/* Mega Dropdown Panel */}
+            {/* Dropdown Menu */}
             {servicesOpen && (
-              <div className="absolute top-full left-0 w-80 p-3 bg-white dark:bg-[#131F42] rounded-xl border border-[#D8E0EE] dark:border-[#22305A] shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="text-xs font-mono uppercase tracking-wider text-[#4A5878] dark:text-[#A9B6D3] px-2 py-1 mb-1">
-                  Core Solutions
+              <div className="absolute top-full left-0 w-72 p-2 bg-surface rounded-xl border border-border shadow-lg animate-in fade-in zoom-in-95 duration-100">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-text-subtle px-2.5 py-1 mb-1">
+                  Capabilities
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {serviceLinks.map((item) => {
                     const Icon = item.icon;
                     return (
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="flex items-start gap-3 p-2 rounded-lg hover:bg-[#F4F7FB] dark:hover:bg-[#0F1A38] transition-colors group"
+                        className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-surface-hover transition-colors group"
                       >
-                        <div className="p-1.5 rounded-md bg-[#1D4ED8]/10 text-[#1D4ED8] dark:text-[#3B82F6] shrink-0 mt-0.5">
-                          <Icon className="w-4 h-4" />
+                        <div className="p-1 rounded bg-surface-hover text-text-muted group-hover:text-primary shrink-0 mt-0.5">
+                          <Icon className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <div className="text-xs font-semibold text-[#0A1128] dark:text-[#F4F7FB] group-hover:text-[#1D4ED8] dark:group-hover:text-[#3B82F6]">
+                          <div className="text-xs font-medium text-text group-hover:text-primary transition-colors">
                             {item.title}
                           </div>
-                          <div className="text-[11px] text-[#4A5878] dark:text-[#A9B6D3] line-clamp-1">
+                          <div className="text-[11px] text-text-subtle line-clamp-1">
                             {item.desc}
                           </div>
                         </div>
@@ -138,13 +121,13 @@ export const Header: React.FC = () => {
                     );
                   })}
                 </div>
-                <div className="mt-2 pt-2 border-t border-[#D8E0EE] dark:border-[#22305A] px-2">
+                <div className="mt-1 pt-1.5 border-t border-border/60 px-2">
                   <Link
                     href="/services"
-                    className="text-xs font-medium text-[#1D4ED8] dark:text-[#3B82F6] hover:underline flex items-center justify-between"
+                    className="text-[11px] font-medium text-text-muted hover:text-text flex items-center justify-between py-1"
                   >
                     <span>View all services overview</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
               </div>
@@ -159,10 +142,8 @@ export const Header: React.FC = () => {
                 href={link.href}
                 aria-current={isActive ? 'page' : undefined}
                 className={cn(
-                  'px-3.5 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] flex items-center',
-                  isActive
-                    ? 'text-[#1D4ED8] dark:text-[#3B82F6] font-semibold'
-                    : 'text-[#0A1128] dark:text-[#F4F7FB] hover:text-[#1D4ED8] dark:hover:text-[#3B82F6]'
+                  'text-xs font-medium transition-colors py-2',
+                  isActive ? 'text-text font-semibold' : 'text-text-muted hover:text-text'
                 )}
               >
                 {link.label}
@@ -171,49 +152,50 @@ export const Header: React.FC = () => {
           })}
         </nav>
 
-        {/* Right CTA Actions */}
-        <div className="hidden lg:flex items-center gap-3">
+        {/* Right Actions */}
+        <div className="hidden md:flex items-center gap-2.5">
           <ThemeToggle />
+          <div className="h-4 w-px bg-border mx-0.5" />
           <Link href="/contact">
-            <Button size="md" variant="primary">
+            <Button size="sm" variant="primary">
               Start a Project
             </Button>
           </Link>
         </div>
 
         {/* Mobile Hamburger Button */}
-        <div className="flex lg:hidden items-center gap-2">
+        <div className="flex md:hidden items-center gap-2">
           <ThemeToggle />
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
-            className="p-2.5 rounded-lg border border-[#D8E0EE] dark:border-[#22305A] text-[#0A1128] dark:text-[#F4F7FB] min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="p-1.5 rounded-md text-text-muted hover:text-text hover:bg-surface-hover border border-border"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-[65px] bottom-0 bg-white dark:bg-[#0A1128] p-6 overflow-y-auto border-t border-[#D8E0EE] dark:border-[#22305A] flex flex-col justify-between">
+        <div className="md:hidden border-b border-border bg-surface px-6 py-5 space-y-4 animate-in fade-in duration-150">
           <nav className="flex flex-col gap-2">
-            <div className="font-mono text-xs uppercase tracking-wider text-[#4A5878] dark:text-[#A9B6D3] py-2">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-text-subtle">
               Navigation
             </div>
             <Link
               href="/services"
-              className="py-3 px-3 rounded-lg text-base font-semibold hover:bg-[#F4F7FB] dark:hover:bg-[#131F42]"
+              className="py-1.5 text-xs font-medium text-text hover:text-primary"
             >
               Services Overview
             </Link>
-            <div className="pl-4 flex flex-col gap-1 border-l-2 border-[#1D4ED8]/30 dark:border-[#3B82F6]/30 mb-2">
+            <div className="pl-3 flex flex-col gap-1 border-l border-border my-1">
               {serviceLinks.map((s) => (
                 <Link
                   key={s.href}
                   href={s.href}
-                  className="py-2 text-sm text-[#4A5878] dark:text-[#A9B6D3] hover:text-[#1D4ED8] dark:hover:text-[#3B82F6]"
+                  className="py-1 text-xs text-text-muted hover:text-text"
                 >
                   {s.title}
                 </Link>
@@ -224,20 +206,20 @@ export const Header: React.FC = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="py-3 px-3 rounded-lg text-base font-semibold hover:bg-[#F4F7FB] dark:hover:bg-[#131F42]"
+                className="py-1.5 text-xs font-medium text-text hover:text-primary"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="pt-6 border-t border-[#D8E0EE] dark:border-[#22305A] flex flex-col gap-3">
+          <div className="pt-3 border-t border-border flex flex-col gap-2.5">
             <Link href="/contact" className="w-full">
-              <Button size="lg" variant="primary" className="w-full">
+              <Button size="md" variant="primary" className="w-full text-xs">
                 Start a Project
               </Button>
             </Link>
-            <div className="text-center text-xs text-[#4A5878] dark:text-[#A9B6D3]">
+            <div className="text-center text-[11px] font-mono text-text-subtle">
               hello@pinnaclestride.com
             </div>
           </div>

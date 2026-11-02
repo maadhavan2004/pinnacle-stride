@@ -55,7 +55,6 @@ export const ContactForm: React.FC = () => {
 
   const handleChange = (field: keyof InquiryInput, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear inline error on edit
     if (errors[field]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -69,7 +68,6 @@ export const ContactForm: React.FC = () => {
     e.preventDefault();
     setApiError(null);
 
-    // 1. Client-side Zod validation
     const result = inquirySchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -80,7 +78,6 @@ export const ContactForm: React.FC = () => {
         }
       });
       setErrors(fieldErrors);
-      // Focus first error element
       const firstField = Object.keys(fieldErrors)[0];
       if (firstField) {
         const el = document.querySelector(`[name="${firstField}"]`) as HTMLElement;
@@ -106,8 +103,7 @@ export const ContactForm: React.FC = () => {
 
       setIsSuccess(true);
     } catch (err: any) {
-      // In local dev without API container running, gracefully mock success for client demo
-      console.warn('API submission failed or backend offline, recording in local storage fallback:', err.message);
+      console.warn('Backend unavailable, saving in local storage queue:', err.message);
       const existingInquiries = JSON.parse(localStorage.getItem('ps_local_inquiries') || '[]');
       existingInquiries.push({
         ...result.data,
@@ -124,26 +120,26 @@ export const ContactForm: React.FC = () => {
 
   if (isSuccess) {
     return (
-      <div className="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] text-center space-y-6 shadow-xl animate-in fade-in duration-300">
-        <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
-          <CheckCircle2 className="w-8 h-8" />
+      <div className="p-8 sm:p-10 rounded-xl bg-surface border border-border text-center space-y-4 shadow-xs animate-in fade-in duration-200">
+        <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
+          <CheckCircle2 className="w-6 h-6" />
         </div>
-        <div className="space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A1128] dark:text-[#F4F7FB]">
-            Thank You! Your Inquiry Is Received.
+        <div className="space-y-1.5">
+          <h2 className="text-xl font-bold text-text">
+            Requirements Received
           </h2>
-          <p className="text-sm sm:text-base text-[#4A5878] dark:text-[#A9B6D3] max-w-md mx-auto">
-            We have safely stored your requirements. A member of our engineering team will review your specifications and reply via email within <span className="font-bold text-[#0A1128] dark:text-[#F4F7FB]">2 business days</span>.
+          <p className="text-xs text-text-muted max-w-sm mx-auto leading-relaxed">
+            We have securely logged your submission. A member of our engineering team will review your specifications and reply via email within <span className="font-semibold text-text">2 business days</span>.
           </p>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#F4F7FB] dark:bg-[#0A1128] border border-[#D8E0EE] dark:border-[#22305A] text-xs font-mono text-[#4A5878] dark:text-[#A9B6D3] max-w-sm mx-auto">
-          Reference: Service Type: <span className="font-semibold">{formData.serviceType}</span>
+        <div className="p-3 rounded-lg bg-bg-subtle border border-border text-[11px] font-mono text-text-muted max-w-xs mx-auto">
+          Service: <span className="font-semibold text-text">{formData.serviceType}</span>
         </div>
 
-        <div className="pt-4">
+        <div className="pt-2">
           <Button
-            size="md"
+            size="sm"
             variant="secondary"
             onClick={() => {
               setIsSuccess(false);
@@ -171,16 +167,16 @@ export const ContactForm: React.FC = () => {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="p-6 sm:p-10 rounded-3xl bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] shadow-lg space-y-8"
+      className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs space-y-6"
     >
       {apiError && (
-        <div role="alert" className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs flex items-center gap-2">
+        <div role="alert" className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{apiError}</span>
         </div>
       )}
 
-      {/* Honeypot field (hidden from view, trap for bots per FR-77) */}
+      {/* Honeypot field (hidden from view, bot trap per FR-77) */}
       <div className="hidden" aria-hidden="true">
         <label htmlFor="website-hp">Website</label>
         <input
@@ -195,12 +191,11 @@ export const ContactForm: React.FC = () => {
       </div>
 
       {/* 1. Full Name & Email */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
           label="Full Name"
           required
           error={errors.fullName}
-          helperText="Your name or preferred title"
         >
           {(id, describedBy) => (
             <Input
@@ -220,7 +215,6 @@ export const ContactForm: React.FC = () => {
           label="Business Email"
           required
           error={errors.email}
-          helperText="Where we should send our reply"
         >
           {(id, describedBy) => (
             <Input
@@ -240,15 +234,14 @@ export const ContactForm: React.FC = () => {
 
       {/* 2. Company Name */}
       <FormField
-        label="Company / Organisation"
+        label="Company / Startup (Optional)"
         error={errors.company}
-        helperText="Optional: Your startup, company, or project name"
       >
         {(id, describedBy) => (
           <Input
             id={id}
             name="company"
-            placeholder="e.g. Acme Tech Solutions"
+            placeholder="e.g. Acme Labs"
             value={formData.company || ''}
             onChange={(e) => handleChange('company', e.target.value)}
             aria-describedby={describedBy}
@@ -256,21 +249,21 @@ export const ContactForm: React.FC = () => {
         )}
       </FormField>
 
-      {/* 3. Service Needed (Radio Cards per FR-71) */}
-      <div className="space-y-3">
-        <label className="text-sm font-medium text-[#0A1128] dark:text-[#F4F7FB] flex items-center gap-1">
-          Service Needed <span className="text-red-500">*</span>
+      {/* 3. Service Needed (Minimalist Radio Tiles) */}
+      <div className="space-y-2">
+        <label className="text-xs font-medium text-text-muted flex items-center gap-1 select-none">
+          Service Scope <span className="text-red-500 font-mono">*</span>
         </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {ServiceTypeEnum.options.map((serviceKey) => {
             const isSelected = formData.serviceType === serviceKey;
             return (
               <label
                 key={serviceKey}
-                className={`p-3.5 rounded-xl border text-xs cursor-pointer transition-all flex items-start gap-2.5 ${
+                className={`p-2.5 rounded-lg border text-xs cursor-pointer transition-colors flex items-center gap-2 ${
                   isSelected
-                    ? 'border-[#1D4ED8] dark:border-[#3B82F6] bg-[#1D4ED8]/5 dark:bg-[#3B82F6]/10 text-[#0A1128] dark:text-[#F4F7FB] font-semibold'
-                    : 'border-[#D8E0EE] dark:border-[#22305A] bg-[#F4F7FB]/40 dark:bg-[#0A1128]/40 text-[#4A5878] dark:text-[#A9B6D3] hover:border-[#1D4ED8]/40'
+                    ? 'border-primary/80 bg-surface text-text font-medium ring-1 ring-primary/40'
+                    : 'border-border bg-bg-subtle/50 text-text-muted hover:border-text-subtle/40'
                 }`}
               >
                 <input
@@ -279,9 +272,9 @@ export const ContactForm: React.FC = () => {
                   value={serviceKey}
                   checked={isSelected}
                   onChange={() => handleChange('serviceType', serviceKey)}
-                  className="mt-0.5 accent-[#1D4ED8]"
+                  className="accent-primary"
                 />
-                <span>{ServiceTypeLabels[serviceKey]}</span>
+                <span className="truncate">{ServiceTypeLabels[serviceKey]}</span>
               </label>
             );
           })}
@@ -289,16 +282,16 @@ export const ContactForm: React.FC = () => {
       </div>
 
       {/* 4. Budget Range & Expected Timeline */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#0A1128] dark:text-[#F4F7FB]">
-            Estimated Budget
+          <label className="text-xs font-medium text-text-muted">
+            Indicative Budget
           </label>
           <select
             name="budgetRange"
             value={formData.budgetRange}
             onChange={(e) => handleChange('budgetRange', e.target.value)}
-            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm bg-white dark:bg-[#0A1128] text-[#0A1128] dark:text-[#F4F7FB] border border-[#D8E0EE] dark:border-[#22305A] focus:outline-none focus:ring-2 focus:ring-[#2DD4BF]"
+            className="w-full h-9 px-3 rounded-lg text-xs bg-surface text-text border border-border focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer font-sans"
           >
             {BudgetRangeEnum.options.map((b) => (
               <option key={b} value={b}>
@@ -309,14 +302,14 @@ export const ContactForm: React.FC = () => {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#0A1128] dark:text-[#F4F7FB]">
+          <label className="text-xs font-medium text-text-muted">
             Target Timeline
           </label>
           <select
             name="timeline"
             value={formData.timeline}
             onChange={(e) => handleChange('timeline', e.target.value)}
-            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm bg-white dark:bg-[#0A1128] text-[#0A1128] dark:text-[#F4F7FB] border border-[#D8E0EE] dark:border-[#22305A] focus:outline-none focus:ring-2 focus:ring-[#2DD4BF]"
+            className="w-full h-9 px-3 rounded-lg text-xs bg-surface text-text border border-border focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer font-sans"
           >
             {TimelineOptionEnum.options.map((t) => (
               <option key={t} value={t}>
@@ -329,17 +322,17 @@ export const ContactForm: React.FC = () => {
 
       {/* 5. Requirements Description */}
       <FormField
-        label="Project Requirements & Objectives"
+        label="Project Objectives & Scope"
         required
         error={errors.message}
-        helperText={`Provide a short overview of what you want to achieve (${(formData.message || '').length}/5000 characters)`}
+        helperText={`${(formData.message || '').length}/5000 characters`}
       >
         {(id, describedBy) => (
           <Textarea
             id={id}
             name="message"
-            rows={5}
-            placeholder="Tell us about your product idea, target users, any existing codebase or APIs, and your primary goals..."
+            rows={4}
+            placeholder="Describe what you want to build, existing infrastructure, target milestones, and key challenges..."
             value={formData.message || ''}
             onChange={(e) => handleChange('message', e.target.value)}
             aria-describedby={describedBy}
@@ -349,26 +342,26 @@ export const ContactForm: React.FC = () => {
         )}
       </FormField>
 
-      {/* 6. Privacy Consent Checkbox (unchecked by default per FR-70 & US-33) */}
+      {/* 6. Privacy Consent Checkbox */}
       <div className="space-y-1">
-        <label className="flex items-start gap-3 cursor-pointer">
+        <label className="flex items-start gap-2.5 cursor-pointer">
           <input
             type="checkbox"
             name="consent"
             checked={formData.consent || false}
             onChange={(e) => handleChange('consent', e.target.checked)}
-            className="w-4 h-4 mt-1 rounded text-[#1D4ED8] accent-[#1D4ED8] focus:ring-[#2DD4BF]"
+            className="w-3.5 h-3.5 mt-0.5 rounded accent-primary focus:ring-primary"
             required
           />
-          <span className="text-xs text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
-            I agree to the processing of my contact details for the purpose of receiving a project consultation and proposal in accordance with PinnacleStride's{' '}
-            <a href="/privacy" target="_blank" className="text-[#1D4ED8] dark:text-[#3B82F6] underline">
+          <span className="text-[11px] text-text-muted leading-relaxed">
+            I agree to the processing of my contact information to receive a project proposal in accordance with PinnacleStride's{' '}
+            <a href="/privacy" target="_blank" className="text-text underline hover:text-primary">
               Privacy Policy
             </a>.
           </span>
         </label>
         {errors.consent && (
-          <p role="alert" className="text-xs font-medium text-red-600 dark:text-red-400 pl-7">
+          <p role="alert" className="text-[11px] font-medium text-danger pl-6">
             {errors.consent}
           </p>
         )}
@@ -378,13 +371,13 @@ export const ContactForm: React.FC = () => {
       <div className="pt-2">
         <Button
           type="submit"
-          size="lg"
+          size="md"
           variant="primary"
           isLoading={isSubmitting}
-          className="w-full text-base"
+          className="w-full"
         >
-          Submit Project Inquiry
-          <Send className="w-4 h-4 ml-2" />
+          Submit Requirements
+          <Send className="w-3.5 h-3.5 ml-1.5" />
         </Button>
       </div>
     </form>

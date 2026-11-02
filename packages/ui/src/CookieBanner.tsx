@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
 import { cn } from './utils';
-import { ShieldCheck, X } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 export const CookieBanner: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -11,8 +11,7 @@ export const CookieBanner: React.FC = () => {
   useEffect(() => {
     const consent = localStorage.getItem('ps_cookie_consent');
     if (!consent) {
-      // Show banner after brief delay
-      const timer = setTimeout(() => setIsVisible(true), 1000);
+      const timer = setTimeout(() => setIsVisible(true), 1200);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -27,41 +26,40 @@ export const CookieBanner: React.FC = () => {
   return (
     <div
       role="region"
-      aria-label="Privacy and Cookie Preferences"
+      aria-label="Privacy Preferences"
       className={cn(
-        'fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 p-5 rounded-2xl shadow-xl transition-all duration-300',
-        'bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] text-[#0A1128] dark:text-[#F4F7FB]'
+        'fixed bottom-5 right-5 left-5 sm:left-auto sm:max-w-sm z-50 p-4 rounded-xl shadow-lg border border-border backdrop-blur-md bg-surface/95 text-text animate-in fade-in slide-in-from-bottom-2 duration-200'
       )}
     >
-      <div className="flex items-start gap-3">
-        <ShieldCheck className="w-5 h-5 text-[#0EA5A4] dark:text-[#2DD4BF] shrink-0 mt-0.5" />
-        <div className="space-y-2 text-xs sm:text-sm">
-          <p className="font-semibold text-sm">Privacy & Cookie Preferences</p>
-          <p className="text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed">
-            We use strictly necessary storage for theme preferences and authenticated admin sessions. We do not use third-party advertising cookies or cross-site tracking. Read our{' '}
-            <a href="/cookies" className="text-[#1D4ED8] dark:text-[#3B82F6] hover:underline">
+      <div className="flex items-start gap-2.5">
+        <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+        <div className="space-y-1 text-xs">
+          <p className="font-medium text-text">Privacy Preferences</p>
+          <p className="text-text-muted leading-relaxed text-[11px]">
+            We use strictly essential local storage for theme preferences and session tokens. No third-party ad tracking.{' '}
+            <a href="/cookies" className="text-primary hover:underline">
               Cookie Policy
             </a>.
           </p>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-end gap-2.5">
+      <div className="mt-3 flex items-center justify-end gap-2 pt-2 border-t border-border/50">
         <Button
           size="sm"
-          variant="secondary"
+          variant="ghost"
           onClick={() => handleChoice('rejected')}
-          className="text-xs min-h-[36px]"
+          className="text-xs h-7 px-2.5"
         >
-          Reject Non-Essential
+          Essential Only
         </Button>
         <Button
           size="sm"
-          variant="primary"
+          variant="secondary"
           onClick={() => handleChoice('accepted')}
-          className="text-xs min-h-[36px]"
+          className="text-xs h-7 px-3"
         >
-          Accept All
+          Accept
         </Button>
       </div>
     </div>

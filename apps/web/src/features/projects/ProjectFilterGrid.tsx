@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Card, Badge } from '@ps/ui';
-import { Project, ProjectCategory } from '@ps/schemas';
+import { Project } from '@ps/schemas';
 import { ArrowRight, ExternalLink, Github } from 'lucide-react';
 
 interface Props {
@@ -15,7 +15,7 @@ const categories: { label: string; value: string }[] = [
   { label: 'GenAI & Agentic AI', value: 'GENAI_AGENTIC' },
   { label: 'Full-Stack Apps', value: 'FULL_STACK_APP' },
   { label: 'Business Websites', value: 'BUSINESS_WEBSITE' },
-  { label: 'Experimental & Prototypes', value: 'EXPERIMENTAL' },
+  { label: 'Experimental', value: 'EXPERIMENTAL' },
 ];
 
 export const ProjectFilterGrid: React.FC<Props> = ({ projects }) => {
@@ -27,9 +27,9 @@ export const ProjectFilterGrid: React.FC<Props> = ({ projects }) => {
       : projects.filter((p) => p.category === selectedCategory);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       {/* Category Filter Tabs */}
-      <div className="flex flex-wrap items-center justify-center gap-2" role="tablist">
+      <div className="flex flex-wrap items-center justify-center gap-1.5 p-1 rounded-lg border border-border bg-surface w-fit mx-auto text-xs font-mono" role="tablist">
         {categories.map((cat) => {
           const isActive = selectedCategory === cat.value;
           return (
@@ -39,10 +39,10 @@ export const ProjectFilterGrid: React.FC<Props> = ({ projects }) => {
               role="tab"
               aria-selected={isActive}
               onClick={() => setSelectedCategory(cat.value)}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all min-h-[40px] ${
+              className={`px-3 py-1.5 rounded-md text-xs transition-colors ${
                 isActive
-                  ? 'bg-[#1D4ED8] dark:bg-[#3B82F6] text-white shadow-sm'
-                  : 'bg-white dark:bg-[#131F42] border border-[#D8E0EE] dark:border-[#22305A] text-[#4A5878] dark:text-[#A9B6D3] hover:text-[#0A1128] dark:hover:text-[#F4F7FB]'
+                  ? 'bg-text text-bg font-medium shadow-xs'
+                  : 'text-text-muted hover:text-text'
               }`}
             >
               {cat.label}
@@ -52,11 +52,11 @@ export const ProjectFilterGrid: React.FC<Props> = ({ projects }) => {
       </div>
 
       {/* Grid of Case Studies */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredProjects.map((project) => (
-          <Card key={project.slug} className="flex flex-col justify-between">
+          <Card key={project.slug} className="flex flex-col justify-between p-6">
             <div>
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <div className="flex items-center justify-between gap-2 mb-3">
                 <Badge
                   variant={
                     project.projectType === 'INTERNAL_PORTFOLIO'
@@ -65,6 +65,7 @@ export const ProjectFilterGrid: React.FC<Props> = ({ projects }) => {
                       ? 'product'
                       : 'client'
                   }
+                  size="sm"
                 >
                   {project.projectType === 'INTERNAL_PORTFOLIO'
                     ? 'Internal Project'
@@ -72,25 +73,25 @@ export const ProjectFilterGrid: React.FC<Props> = ({ projects }) => {
                     ? 'Product'
                     : 'Client Work'}
                 </Badge>
-                <span className="text-[11px] font-mono text-[#4A5878] dark:text-[#A9B6D3]">
+                <span className="text-[10px] font-mono text-text-subtle">
                   {project.category.replace('_', ' ')}
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-[#0A1128] dark:text-[#F4F7FB] mb-3">
+              <h3 className="text-sm font-semibold text-text mb-2">
                 {project.title}
               </h3>
 
-              <p className="text-sm text-[#4A5878] dark:text-[#A9B6D3] leading-relaxed mb-6">
+              <p className="text-xs text-text-muted leading-relaxed mb-4">
                 {project.summary}
               </p>
 
               {/* Technologies */}
-              <div className="flex flex-wrap gap-1.5 mb-6">
+              <div className="flex flex-wrap gap-1 mb-5">
                 {project.technologies.map((t) => (
                   <span
                     key={t}
-                    className="text-[11px] font-mono px-2 py-0.5 rounded bg-black/5 dark:bg-white/5 border border-[#D8E0EE] dark:border-[#22305A] text-[#4A5878] dark:text-[#A9B6D3]"
+                    className="text-[10px] font-mono px-2 py-0.5 rounded bg-bg-subtle border border-border text-text-muted"
                   >
                     {t}
                   </span>
@@ -98,25 +99,25 @@ export const ProjectFilterGrid: React.FC<Props> = ({ projects }) => {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#D8E0EE] dark:border-[#22305A] flex items-center justify-between">
+            <div className="pt-3 border-t border-border flex items-center justify-between">
               <Link
                 href={`/projects/${project.slug}`}
-                className="inline-flex items-center text-sm font-semibold text-[#1D4ED8] dark:text-[#3B82F6] hover:underline"
+                className="inline-flex items-center text-xs font-medium text-text hover:text-primary transition-colors"
               >
                 <span>Read Case Study</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
+                <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </Link>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {project.repoUrl && (
                   <a
                     href={project.repoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Repository"
-                    className="p-1.5 rounded text-[#4A5878] dark:text-[#A9B6D3] hover:text-[#0A1128] dark:hover:text-[#F4F7FB]"
+                    className="p-1.5 rounded text-text-subtle hover:text-text transition-colors"
                   >
-                    <Github className="w-4 h-4" />
+                    <Github className="w-3.5 h-3.5" />
                   </a>
                 )}
                 {project.liveUrl && (
@@ -125,9 +126,9 @@ export const ProjectFilterGrid: React.FC<Props> = ({ projects }) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Live Demo"
-                    className="p-1.5 rounded text-[#4A5878] dark:text-[#A9B6D3] hover:text-[#0A1128] dark:hover:text-[#F4F7FB]"
+                    className="p-1.5 rounded text-text-subtle hover:text-text transition-colors"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 )}
               </div>
