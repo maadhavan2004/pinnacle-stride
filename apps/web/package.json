@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "prebuild": "pnpm --filter @ps/schemas build && pnpm --filter @ps/content build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
