@@ -20,9 +20,24 @@ async function bootstrap() {
   // Global RFC 9457 exception filter
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  // Enable CORS for local web client
+  // Enable CORS for web client (Vercel, custom domains, and local dev)
+  const configuredOrigins = (process.env.APP_URL || 'http://localhost:3000')
+    .split(',')
+    .map((o) => o.trim());
+  configuredOrigins.push('http://127.0.0.1:3000', 'http://localhost:3000');
+
   app.enableCors({
-    origin: [process.env.APP_URL || 'http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (
+        configuredOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        process.env.NODE_ENV !== 'production'
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS origin not allowed: ${origin}`), false);
+    },
     credentials: true,
   });
 

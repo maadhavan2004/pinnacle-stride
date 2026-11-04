@@ -12,13 +12,17 @@
   "scripts": {
     "dev:web": "pnpm --filter web dev",
     "dev:api": "pnpm --filter api dev",
-    "build:web": "pnpm --filter web build",
-    "build:api": "pnpm --filter api build",
-    "build": "pnpm --filter web build",
+    "build:packages": "pnpm --filter @ps/schemas build && pnpm --filter @ps/content build",
+    "build:web": "pnpm build:packages && pnpm --filter web build",
+    "build:api": "pnpm build:packages && pnpm --filter api build",
+    "build": "pnpm build:packages && pnpm --filter web build",
     "typecheck": "pnpm -r --stream typecheck",
     "lint": "pnpm --filter web lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
     "db:migrate": "pnpm --filter api db:migrate",
+    "db:push": "pnpm --filter api db:push",
+    "db:deploy": "pnpm --filter api db:deploy",
+    "db:generate": "pnpm --filter api db:generate",
     "db:seed": "pnpm --filter api db:seed"
   },
   "devDependencies": {
