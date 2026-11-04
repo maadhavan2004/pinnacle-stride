@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Logo } from '@ps/ui';
-import { Github, Linkedin, Mail, MapPin } from 'lucide-react';
+import { Github, Linkedin, Mail, MapPin, Lock } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -180,8 +180,12 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-4">
             <span className="font-mono">Build Beyond. Stride Ahead.</span>
             <span>·</span>
-            <Link href="/admin" className="hover:text-text transition-colors">
-              Admin Portal
+            <Link
+              href="/admin"
+              className="hover:text-text transition-colors flex items-center gap-1 font-mono"
+            >
+              <Lock className="w-3 h-3 text-text-subtle" />
+              <span>Staff / Admin</span>
             </Link>
           </div>
         </div>

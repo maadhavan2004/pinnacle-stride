@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo, Button, cn } from '@ps/ui';
 import { ThemeToggle } from './ThemeToggle';
-import { ChevronDown, Menu, X, ArrowRight, Layers, Cpu, Sparkles, Globe, Cloud } from 'lucide-react';
+import { ChevronDown, Menu, X, ArrowRight, Layers, Cpu, Sparkles, Globe, Cloud, Lock } from 'lucide-react';
 
 const serviceLinks = [
   {
@@ -49,6 +49,21 @@ export const Header: React.FC = () => {
     setMobileMenuOpen(false);
     setServicesOpen(false);
   }, [pathname]);
+
+  // Global employee keyboard shortcut: Alt+A or Ctrl+Shift+A opens Admin Portal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.altKey && e.key.toLowerCase() === 'a') ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a')
+      ) {
+        e.preventDefault();
+        window.location.href = '/admin';
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const navLinks = [
     { href: '/products', label: 'Products' },
@@ -153,8 +168,16 @@ export const Header: React.FC = () => {
         </nav>
 
         {/* Right Actions */}
-        <div className="hidden md:flex items-center gap-2.5">
+        <div className="hidden md:flex items-center gap-2">
           <ThemeToggle />
+          <Link
+            href="/admin"
+            title="Employee & Admin Portal (Alt+A)"
+            aria-label="Staff and Admin Portal"
+            className="p-1.5 rounded-md hover:bg-surface-hover text-text-subtle hover:text-text border border-border transition-colors flex items-center justify-center"
+          >
+            <Lock className="w-3.5 h-3.5" />
+          </Link>
           <div className="h-4 w-px bg-border mx-0.5" />
           <Link href="/contact">
             <Button size="sm" variant="primary">
@@ -166,6 +189,14 @@ export const Header: React.FC = () => {
         {/* Mobile Hamburger Button */}
         <div className="flex md:hidden items-center gap-2">
           <ThemeToggle />
+          <Link
+            href="/admin"
+            title="Staff Access"
+            aria-label="Staff Portal"
+            className="p-1.5 rounded-md text-text-subtle hover:text-text hover:bg-surface-hover border border-border"
+          >
+            <Lock className="w-3.5 h-3.5" />
+          </Link>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -219,8 +250,12 @@ export const Header: React.FC = () => {
                 Start a Project
               </Button>
             </Link>
-            <div className="text-center text-[11px] font-mono text-text-subtle">
-              hello@pinnaclestride.com
+            <div className="flex items-center justify-between text-[11px] text-text-subtle pt-1 font-mono">
+              <span>hello@pinnaclestride.com</span>
+              <Link href="/admin" className="hover:text-text flex items-center gap-1">
+                <Lock className="w-3 h-3" />
+                <span>Staff Portal</span>
+              </Link>
             </div>
           </div>
         </div>
