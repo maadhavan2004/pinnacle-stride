@@ -5,7 +5,7 @@ services:
     plan: free
     region: oregon
     branch: master
-    buildCommand: pnpm install && pnpm build:packages && pnpm db:generate && pnpm --filter api build
+    buildCommand: pnpm install --prod=false && pnpm build:packages && pnpm db:generate && pnpm --filter api build
     startCommand: pnpm --filter api start
     healthCheckPath: /api/v1/health/live
     envVars:
