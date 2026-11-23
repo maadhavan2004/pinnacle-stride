@@ -2,20 +2,13 @@
 
 import React from 'react';
 
-export type WireBuildStep =
-  | 'idle'
-  | 'emit'
-  | 'draw'
-  | 'travel'
-  | 'illuminate'
-  | 'arrive'
-  | 'completed';
+export type WireStatus = 'hidden' | 'drawing' | 'completed';
 
 interface ProcessConnectingWireProps {
   wireIndex: number; // 1 to 4
-  buildStep: WireBuildStep;
+  status: WireStatus;
   progress: number; // 0 to 100
-  isIlluminated: boolean;
+  isArrivalPulse: boolean;
   isFinaleWave: boolean;
   isFinaleSettled: boolean;
   direction?: 'horizontal' | 'vertical';
@@ -23,30 +16,32 @@ interface ProcessConnectingWireProps {
 
 export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
   wireIndex,
-  buildStep,
+  status,
   progress,
-  isIlluminated,
+  isArrivalPulse,
   isFinaleWave,
   isFinaleSettled,
   direction = 'horizontal',
 }) => {
-  const isIdle = buildStep === 'idle';
-  const isEmit = buildStep === 'emit';
-  const isDrawOrTravel = buildStep === 'draw' || buildStep === 'travel';
-  const isArrive = buildStep === 'arrive';
-  const isSteady = isIlluminated || isFinaleSettled;
+  const isHidden = status === 'hidden';
+  const isDrawing = status === 'drawing';
+  const isCompleted = status === 'completed';
 
   // HORIZONTAL WIRE (DESKTOP)
   if (direction === 'horizontal') {
     return (
-      <div className="flex-shrink-0 w-8 md:w-10 lg:w-12 xl:w-14 h-8 flex items-center justify-center relative select-none">
+      <div
+        className={`flex-shrink-0 w-8 md:w-10 lg:w-12 xl:w-14 h-8 flex items-center justify-center relative select-none transition-opacity duration-300 ${
+          isHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
         <svg
           className="w-full h-8 overflow-visible"
           viewBox="0 0 100 24"
           preserveAspectRatio="none"
         >
           <defs>
-            {/* Glow Filter for Circuit Line & Travelling Particle */}
+            {/* Glow Filter for Circuit Line & Travelling Photon */}
             <filter id={`wireGlow-${wireIndex}`} x="-30%" y="-30%" width="160%" height="160%">
               <feGaussianBlur stdDeviation="3" result="blur" />
               <feMerge>
@@ -75,21 +70,21 @@ export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
           />
 
           {/* 2. Illuminated Energy Pathway */}
-          {(isDrawOrTravel || isArrive || isSteady || isFinaleWave) && (
+          {(!isHidden) && (
             <line
               x1="0"
               y1="12"
               x2="100"
               y2="12"
               stroke={`url(#wireGrad-${wireIndex})`}
-              strokeWidth={isFinaleWave ? '3.5' : isDrawOrTravel ? '2.5' : '2'}
+              strokeWidth={isFinaleWave ? '3.5' : isDrawing ? '2.5' : '2'}
               strokeDasharray="100"
-              strokeDashoffset={isSteady || isFinaleWave ? 0 : 100 - progress}
+              strokeDashoffset={isCompleted || isFinaleWave || isFinaleSettled ? 0 : 100 - progress}
               filter={`url(#wireGlow-${wireIndex})`}
               className={`transition-all duration-300 ${
                 isFinaleWave
                   ? 'filter drop-shadow-[0_0_12px_#c084fc] drop-shadow-[0_0_20px_#38bdf8]'
-                  : isSteady
+                  : isCompleted || isFinaleSettled
                   ? 'opacity-80'
                   : 'opacity-100'
               }`}
@@ -97,7 +92,7 @@ export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
           )}
 
           {/* 3. Travelling Photon Particle with Comet Tail */}
-          {isDrawOrTravel && (
+          {isDrawing && (
             <g>
               {/* Comet Tail */}
               <line
@@ -123,24 +118,24 @@ export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
           )}
 
           {/* 4. Origin Emission Node */}
-          {(isEmit || isDrawOrTravel || isSteady || isFinaleWave) && (
+          {(!isHidden) && (
             <circle
               cx="0"
               cy="12"
               r="2.5"
-              fill={isEmit ? '#ffffff' : '#c084fc'}
-              className={isEmit ? 'animate-ping' : ''}
+              fill={isDrawing && progress < 15 ? '#ffffff' : '#c084fc'}
+              className={isDrawing && progress < 15 ? 'animate-ping' : ''}
             />
           )}
 
           {/* 5. Destination Arrival Ring */}
-          {(isArrive || isSteady || isFinaleWave) && (
+          {(isArrivalPulse || isCompleted || isFinaleWave || isFinaleSettled) && (
             <circle
               cx="100"
               cy="12"
-              r="2.5"
-              fill={isArrive ? '#38bdf8' : '#c084fc'}
-              className={isArrive ? 'animate-ping' : ''}
+              r={isArrivalPulse ? '4' : '2.5'}
+              fill={isArrivalPulse ? '#38bdf8' : '#c084fc'}
+              className={isArrivalPulse ? 'animate-ping' : ''}
             />
           )}
         </svg>
@@ -150,7 +145,11 @@ export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
 
   // VERTICAL WIRE (MOBILE)
   return (
-    <div className="w-full h-10 flex items-center justify-center relative my-0.5 select-none">
+    <div
+      className={`w-full h-10 flex items-center justify-center relative my-0.5 select-none transition-opacity duration-300 ${
+        isHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      }`}
+    >
       <svg
         className="w-8 h-10 overflow-visible"
         viewBox="0 0 24 40"
@@ -176,7 +175,7 @@ export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
         />
 
         {/* Active Vertical Line */}
-        {(isDrawOrTravel || isArrive || isSteady || isFinaleWave) && (
+        {(!isHidden) && (
           <line
             x1="12"
             y1="0"
@@ -185,9 +184,9 @@ export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
             stroke={`url(#wireGradVert-${wireIndex})`}
             strokeWidth={isFinaleWave ? '3.5' : '2.5'}
             strokeDasharray="40"
-            strokeDashoffset={isSteady || isFinaleWave ? 0 : 40 - (40 * progress) / 100}
+            strokeDashoffset={isCompleted || isFinaleWave || isFinaleSettled ? 0 : 40 - (40 * progress) / 100}
             className={
-              isSteady || isFinaleWave
+              isCompleted || isFinaleSettled || isFinaleWave
                 ? 'transition-all duration-300 filter drop-shadow-[0_0_6px_#c084fc]'
                 : ''
             }
@@ -195,7 +194,7 @@ export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
         )}
 
         {/* Travelling Particle (Vertical) */}
-        {isDrawOrTravel && (
+        {isDrawing && (
           <g>
             <line
               x1="12"
@@ -218,18 +217,18 @@ export const ProcessConnectingWire: React.FC<ProcessConnectingWireProps> = ({
         )}
 
         {/* Origin Node */}
-        {(isEmit || isDrawOrTravel || isSteady || isFinaleWave) && (
+        {(!isHidden) && (
           <circle cx="12" cy="0" r="2.5" fill="#c084fc" />
         )}
 
         {/* Destination Arrival Node */}
-        {(isArrive || isSteady || isFinaleWave) && (
+        {(isArrivalPulse || isCompleted || isFinaleWave || isFinaleSettled) && (
           <circle
             cx="12"
             cy="40"
-            r="2.5"
+            r={isArrivalPulse ? '4' : '2.5'}
             fill="#38bdf8"
-            className={isArrive ? 'animate-ping' : ''}
+            className={isArrivalPulse ? 'animate-ping' : ''}
           />
         )}
       </svg>

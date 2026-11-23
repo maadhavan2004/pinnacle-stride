@@ -2,125 +2,84 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ProcessStage } from '@ps/content';
-import { ProcessStageCard, CardBuildStep } from './process/ProcessStageCard';
-import { ProcessConnectingWire, WireBuildStep } from './process/ProcessConnectingWire';
+import { ProcessStageCard, CardStatus } from './process/ProcessStageCard';
+import { ProcessConnectingWire, WireStatus } from './process/ProcessConnectingWire';
 import { ProcessInfoPanel } from './process/ProcessInfoPanel';
 
 interface Props {
   stages: ProcessStage[];
 }
 
-type TimelinePhase =
-  | 'untriggered'
+export type TimelinePhase =
+  | 'idle'
   | 'lead_in'
-  // Stage 1
-  | 'c1_spark'
-  | 'c1_expand'
-  | 'c1_blink'
-  | 'c1_trace'
-  | 'c1_materialise'
-  | 'c1_number'
-  | 'c1_icon'
-  | 'c1_title'
-  | 'c1_description'
-  | 'c1_settle'
-  | 'c1_done'
+  // Stage 1 (Discovery)
+  | 'b1_forming'
+  | 'b1_typing'
+  | 'b1_pause'
   // Wire 1
-  | 'w1_emit'
-  | 'w1_draw'
-  | 'w1_arrive'
-  | 'w1_done'
-  // Stage 2
-  | 'c2_spark'
-  | 'c2_expand'
-  | 'c2_blink'
-  | 'c2_trace'
-  | 'c2_materialise'
-  | 'c2_number'
-  | 'c2_icon'
-  | 'c2_title'
-  | 'c2_description'
-  | 'c2_settle'
-  | 'c2_done'
+  | 'w1_growing'
+  | 'w1_pulse'
+  // Stage 2 (Planning)
+  | 'b2_blinking'
+  | 'b2_forming'
+  | 'b2_typing'
+  | 'b2_pause'
   // Wire 2
-  | 'w2_emit'
-  | 'w2_draw'
-  | 'w2_arrive'
-  | 'w2_done'
-  // Stage 3
-  | 'c3_spark'
-  | 'c3_expand'
-  | 'c3_blink'
-  | 'c3_trace'
-  | 'c3_materialise'
-  | 'c3_number'
-  | 'c3_icon'
-  | 'c3_title'
-  | 'c3_description'
-  | 'c3_settle'
-  | 'c3_done'
+  | 'w2_growing'
+  | 'w2_pulse'
+  // Stage 3 (Development)
+  | 'b3_blinking'
+  | 'b3_forming'
+  | 'b3_typing'
+  | 'b3_pause'
   // Wire 3
-  | 'w3_emit'
-  | 'w3_draw'
-  | 'w3_arrive'
-  | 'w3_done'
-  // Stage 4
-  | 'c4_spark'
-  | 'c4_expand'
-  | 'c4_blink'
-  | 'c4_trace'
-  | 'c4_materialise'
-  | 'c4_number'
-  | 'c4_icon'
-  | 'c4_title'
-  | 'c4_description'
-  | 'c4_settle'
-  | 'c4_done'
+  | 'w3_growing'
+  | 'w3_pulse'
+  // Stage 4 (Testing)
+  | 'b4_blinking'
+  | 'b4_forming'
+  | 'b4_typing'
+  | 'b4_pause'
   // Wire 4
-  | 'w4_emit'
-  | 'w4_draw'
-  | 'w4_arrive'
-  | 'w4_done'
-  // Stage 5
-  | 'c5_spark'
-  | 'c5_expand'
-  | 'c5_blink'
-  | 'c5_trace'
-  | 'c5_materialise'
-  | 'c5_number'
-  | 'c5_icon'
-  | 'c5_title'
-  | 'c5_description'
-  | 'c5_settle'
-  | 'c5_done'
+  | 'w4_growing'
+  | 'w4_pulse'
+  // Stage 5 (Launch)
+  | 'b5_blinking'
+  | 'b5_forming'
+  | 'b5_typing'
+  | 'b5_pause'
   // Finale
   | 'finale_wave'
-  | 'finale_settle';
+  | 'complete';
 
 export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Core state
-  const [timelinePhase, setTimelinePhase] = useState<TimelinePhase>('untriggered');
+  // Animation State Machine
+  const [phase, setPhase] = useState<TimelinePhase>('idle');
   const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [activeInfoStep, setActiveInfoStep] = useState<number>(1);
+  const [activeInfoStep, setActiveInfoStep] = useState<number | null>(null);
   const [userInspecting, setUserInspecting] = useState<boolean>(false);
   const [isReducedMotion, setIsReducedMotion] = useState<boolean>(false);
-  const [wireProgress, setWireProgress] = useState<number>(0);
 
-  // Refs for timer and animation frame cleanup
+  // Dynamic progress values
+  const [wireProgress, setWireProgress] = useState<number>(0);
+  const [typingCharIndex, setTypingCharIndex] = useState<number>(0);
+
+  // Refs for clean cancellation
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const animFrameRef = useRef<number | null>(null);
-  const isPausedRef = useRef<boolean>(false);
-  isPausedRef.current = isPaused;
+  const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 1. Reduced Motion Detection & Intersection Observer (40% visible)
+  // 1. Reduced Motion Detection & Intersection Observer (40% viewport trigger)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       if (mediaQuery.matches) {
         setIsReducedMotion(true);
-        setTimelinePhase('finale_settle');
+        setPhase('complete');
+        setActiveInfoStep(1);
         return;
       }
     }
@@ -128,18 +87,21 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        if (entry && entry.isIntersecting && timelinePhase === 'untriggered') {
-          setTimelinePhase('lead_in');
+        if (entry && entry.isIntersecting) {
+          setPhase((current) => (current === 'idle' ? 'lead_in' : current));
+        } else if (entry && !entry.isIntersecting) {
+          // Pause when scrolling away
+          setIsPaused(true);
         }
       },
-      { threshold: 0.35 }
+      { threshold: 0.4 }
     );
 
     if (containerRef.current) {
       observer.observe(containerRef.current);
     }
 
-    // Visibility change handler (pause when tab hidden)
+    // Tab visibility change
     const handleVisibilityChange = () => {
       if (document.hidden) {
         setIsPaused(true);
@@ -151,128 +113,133 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
       observer.disconnect();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [timelinePhase]);
+  }, []);
 
-  // 2. Timeline Step Definition Table
-  const timelineTransitions: Record<
-    TimelinePhase,
-    { next: TimelinePhase; duration: number; autoInfoStep?: number; isWire?: boolean }
-  > = {
-    untriggered: { next: 'untriggered', duration: 0 },
-    lead_in: { next: 'c1_spark', duration: 600, autoInfoStep: 1 },
+  // Compute total characters for a given stage
+  const getStageTotalChars = useCallback(
+    (step: number) => {
+      const stage = stages.find((s) => s.step === step) || stages[step - 1];
+      if (!stage) return 70;
+      return `0${stage.step}`.length + stage.title.length + stage.summary.length;
+    },
+    [stages]
+  );
 
-    // Stage 1 (Discovery)
-    c1_spark: { next: 'c1_expand', duration: 250 },
-    c1_expand: { next: 'c1_blink', duration: 300 },
-    c1_blink: { next: 'c1_trace', duration: 350 },
-    c1_trace: { next: 'c1_materialise', duration: 550 },
-    c1_materialise: { next: 'c1_number', duration: 250 },
-    c1_number: { next: 'c1_icon', duration: 250 },
-    c1_icon: { next: 'c1_title', duration: 250 },
-    c1_title: { next: 'c1_description', duration: 250 },
-    c1_description: { next: 'c1_settle', duration: 350 },
-    c1_settle: { next: 'c1_done', duration: 250 },
-    c1_done: { next: 'w1_emit', duration: 300 },
-
-    // Wire 1
-    w1_emit: { next: 'w1_draw', duration: 200, isWire: true },
-    w1_draw: { next: 'w1_arrive', duration: 800, isWire: true },
-    w1_arrive: { next: 'w1_done', duration: 200, isWire: true },
-    w1_done: { next: 'c2_spark', duration: 250, autoInfoStep: 2 },
-
-    // Stage 2 (Planning)
-    c2_spark: { next: 'c2_expand', duration: 250 },
-    c2_expand: { next: 'c2_blink', duration: 300 },
-    c2_blink: { next: 'c2_trace', duration: 350 },
-    c2_trace: { next: 'c2_materialise', duration: 550 },
-    c2_materialise: { next: 'c2_number', duration: 250 },
-    c2_number: { next: 'c2_icon', duration: 250 },
-    c2_icon: { next: 'c2_title', duration: 250 },
-    c2_title: { next: 'c2_description', duration: 250 },
-    c2_description: { next: 'c2_settle', duration: 350 },
-    c2_settle: { next: 'c2_done', duration: 250 },
-    c2_done: { next: 'w2_emit', duration: 300 },
-
-    // Wire 2
-    w2_emit: { next: 'w2_draw', duration: 200, isWire: true },
-    w2_draw: { next: 'w2_arrive', duration: 800, isWire: true },
-    w2_arrive: { next: 'w2_done', duration: 200, isWire: true },
-    w2_done: { next: 'c3_spark', duration: 250, autoInfoStep: 3 },
-
-    // Stage 3 (Development)
-    c3_spark: { next: 'c3_expand', duration: 250 },
-    c3_expand: { next: 'c3_blink', duration: 300 },
-    c3_blink: { next: 'c3_trace', duration: 350 },
-    c3_trace: { next: 'c3_materialise', duration: 550 },
-    c3_materialise: { next: 'c3_number', duration: 250 },
-    c3_number: { next: 'c3_icon', duration: 250 },
-    c3_icon: { next: 'c3_title', duration: 250 },
-    c3_title: { next: 'c3_description', duration: 250 },
-    c3_description: { next: 'c3_settle', duration: 350 },
-    c3_settle: { next: 'c3_done', duration: 250 },
-    c3_done: { next: 'w3_emit', duration: 300 },
-
-    // Wire 3
-    w3_emit: { next: 'w3_draw', duration: 200, isWire: true },
-    w3_draw: { next: 'w3_arrive', duration: 800, isWire: true },
-    w3_arrive: { next: 'w3_done', duration: 200, isWire: true },
-    w3_done: { next: 'c4_spark', duration: 250, autoInfoStep: 4 },
-
-    // Stage 4 (Testing)
-    c4_spark: { next: 'c4_expand', duration: 250 },
-    c4_expand: { next: 'c4_blink', duration: 300 },
-    c4_blink: { next: 'c4_trace', duration: 350 },
-    c4_trace: { next: 'c4_materialise', duration: 550 },
-    c4_materialise: { next: 'c4_number', duration: 250 },
-    c4_number: { next: 'c4_icon', duration: 250 },
-    c4_icon: { next: 'c4_title', duration: 250 },
-    c4_title: { next: 'c4_description', duration: 250 },
-    c4_description: { next: 'c4_settle', duration: 350 },
-    c4_settle: { next: 'c4_done', duration: 250 },
-    c4_done: { next: 'w4_emit', duration: 300 },
-
-    // Wire 4
-    w4_emit: { next: 'w4_draw', duration: 200, isWire: true },
-    w4_draw: { next: 'w4_arrive', duration: 800, isWire: true },
-    w4_arrive: { next: 'w4_done', duration: 200, isWire: true },
-    w4_done: { next: 'c5_spark', duration: 250, autoInfoStep: 5 },
-
-    // Stage 5 (Launch)
-    c5_spark: { next: 'c5_expand', duration: 250 },
-    c5_expand: { next: 'c5_blink', duration: 300 },
-    c5_blink: { next: 'c5_trace', duration: 350 },
-    c5_trace: { next: 'c5_materialise', duration: 600 },
-    c5_materialise: { next: 'c5_number', duration: 250 },
-    c5_number: { next: 'c5_icon', duration: 250 },
-    c5_icon: { next: 'c5_title', duration: 250 },
-    c5_title: { next: 'c5_description', duration: 250 },
-    c5_description: { next: 'c5_settle', duration: 400 },
-    c5_settle: { next: 'c5_done', duration: 300 },
-    c5_done: { next: 'finale_wave', duration: 300 },
-
-    // Finale
-    finale_wave: { next: 'finale_settle', duration: 1500 },
-    finale_settle: { next: 'finale_settle', duration: 0 },
-  };
-
-  // 3. Central Sequencer
+  // 2. State Machine Transitions & Timers
   useEffect(() => {
-    if (isPaused || timelinePhase === 'untriggered' || timelinePhase === 'finale_settle') {
+    if (isPaused || phase === 'idle' || phase === 'complete') {
       return;
     }
 
-    const stepInfo = timelineTransitions[timelinePhase];
-    if (!stepInfo || stepInfo.duration === 0) return;
+    // Clean any prior timers
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
 
-    // Automatically update info panel if user hasn't explicitly clicked away to inspect
-    if (stepInfo.autoInfoStep && !userInspecting) {
-      setActiveInfoStep(stepInfo.autoInfoStep);
+    // --- A. LEAD-IN (0.8s) ---
+    if (phase === 'lead_in') {
+      timerRef.current = setTimeout(() => {
+        setPhase('b1_forming');
+      }, 800);
     }
 
-    // Smooth progress interpolation for wire travelling particle
-    if (timelinePhase.includes('_draw')) {
+    // --- B. BOX FORMING PHASES (2.0s, Launch 2.2s) ---
+    else if (phase === 'b1_forming') {
+      timerRef.current = setTimeout(() => {
+        setTypingCharIndex(0);
+        setPhase('b1_typing');
+      }, 2000);
+    } else if (phase === 'b2_forming') {
+      timerRef.current = setTimeout(() => {
+        setTypingCharIndex(0);
+        setPhase('b2_typing');
+      }, 2000);
+    } else if (phase === 'b3_forming') {
+      timerRef.current = setTimeout(() => {
+        setTypingCharIndex(0);
+        setPhase('b3_typing');
+      }, 2000);
+    } else if (phase === 'b4_forming') {
+      timerRef.current = setTimeout(() => {
+        setTypingCharIndex(0);
+        setPhase('b4_typing');
+      }, 2000);
+    } else if (phase === 'b5_forming') {
+      timerRef.current = setTimeout(() => {
+        setTypingCharIndex(0);
+        setPhase('b5_typing');
+      }, 2200);
+    }
+
+    // --- C. BOX BLINKING PHASES (0.6s) ---
+    else if (phase === 'b2_blinking') {
+      timerRef.current = setTimeout(() => setPhase('b2_forming'), 600);
+    } else if (phase === 'b3_blinking') {
+      timerRef.current = setTimeout(() => setPhase('b3_forming'), 600);
+    } else if (phase === 'b4_blinking') {
+      timerRef.current = setTimeout(() => setPhase('b4_forming'), 600);
+    } else if (phase === 'b5_blinking') {
+      timerRef.current = setTimeout(() => setPhase('b5_forming'), 600);
+    }
+
+    // --- D. TYPEWRITER TYPING PHASES (~35ms per character) ---
+    else if (
+      phase === 'b1_typing' ||
+      phase === 'b2_typing' ||
+      phase === 'b3_typing' ||
+      phase === 'b4_typing' ||
+      phase === 'b5_typing'
+    ) {
+      const stepNum = parseInt(phase.slice(1, 2), 10);
+      const totalChars = getStageTotalChars(stepNum);
+
+      typingIntervalRef.current = setInterval(() => {
+        setTypingCharIndex((prev) => {
+          const next = prev + 1;
+          if (next >= totalChars) {
+            if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+            // Advance to pause phase
+            setTimeout(() => {
+              if (stepNum === 1) setPhase('b1_pause');
+              else if (stepNum === 2) setPhase('b2_pause');
+              else if (stepNum === 3) setPhase('b3_pause');
+              else if (stepNum === 4) setPhase('b4_pause');
+              else if (stepNum === 5) setPhase('b5_pause');
+            }, 50);
+          }
+          return next;
+        });
+      }, 35);
+    }
+
+    // --- E. POST-TYPING PAUSE & INFO PANEL REVEAL (0.4s) ---
+    else if (phase === 'b1_pause') {
+      if (!userInspecting) setActiveInfoStep(1);
+      timerRef.current = setTimeout(() => setPhase('w1_growing'), 400);
+    } else if (phase === 'b2_pause') {
+      if (!userInspecting) setActiveInfoStep(2);
+      timerRef.current = setTimeout(() => setPhase('w2_growing'), 400);
+    } else if (phase === 'b3_pause') {
+      if (!userInspecting) setActiveInfoStep(3);
+      timerRef.current = setTimeout(() => setPhase('w3_growing'), 400);
+    } else if (phase === 'b4_pause') {
+      if (!userInspecting) setActiveInfoStep(4);
+      timerRef.current = setTimeout(() => setPhase('w4_growing'), 400);
+    } else if (phase === 'b5_pause') {
+      if (!userInspecting) setActiveInfoStep(5);
+      timerRef.current = setTimeout(() => setPhase('finale_wave'), 400);
+    }
+
+    // --- F. WIRE GROWING & TRAVELLING PARTICLE (1.8s) ---
+    else if (
+      phase === 'w1_growing' ||
+      phase === 'w2_growing' ||
+      phase === 'w3_growing' ||
+      phase === 'w4_growing'
+    ) {
+      const wireNum = parseInt(phase.slice(1, 2), 10);
+      const duration = 1800;
       const startTime = performance.now();
-      const duration = stepInfo.duration;
 
       const animateWire = (now: number) => {
         const elapsed = now - startTime;
@@ -281,100 +248,134 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
 
         if (elapsed < duration) {
           animFrameRef.current = requestAnimationFrame(animateWire);
+        } else {
+          setWireProgress(100);
+          if (wireNum === 1) setPhase('w1_pulse');
+          else if (wireNum === 2) setPhase('w2_pulse');
+          else if (wireNum === 3) setPhase('w3_pulse');
+          else if (wireNum === 4) setPhase('w4_pulse');
         }
       };
 
       animFrameRef.current = requestAnimationFrame(animateWire);
     }
 
-    // Schedule next transition
-    timerRef.current = setTimeout(() => {
-      setWireProgress(0);
-      setTimelinePhase(stepInfo.next);
-    }, stepInfo.duration);
+    // --- G. WIRE ARRIVAL PULSE (0.3s) ---
+    else if (phase === 'w1_pulse') {
+      timerRef.current = setTimeout(() => {
+        setWireProgress(0);
+        setPhase('b2_blinking');
+      }, 300);
+    } else if (phase === 'w2_pulse') {
+      timerRef.current = setTimeout(() => {
+        setWireProgress(0);
+        setPhase('b3_blinking');
+      }, 300);
+    } else if (phase === 'w3_pulse') {
+      timerRef.current = setTimeout(() => {
+        setWireProgress(0);
+        setPhase('b4_blinking');
+      }, 300);
+    } else if (phase === 'w4_pulse') {
+      timerRef.current = setTimeout(() => {
+        setWireProgress(0);
+        setPhase('b5_blinking');
+      }, 300);
+    }
+
+    // --- H. FINALE WAVE (1.8s) ---
+    else if (phase === 'finale_wave') {
+      timerRef.current = setTimeout(() => {
+        setPhase('complete');
+      }, 1800);
+    }
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
     };
-  }, [timelinePhase, isPaused, userInspecting]);
+  }, [phase, isPaused, userInspecting, getStageTotalChars]);
 
-  // 4. Auto-Replay After Completed State (holds for 8s)
-  useEffect(() => {
-    if (timelinePhase === 'finale_settle' && !isPaused && !userInspecting && !isReducedMotion) {
-      const replayTimer = setTimeout(() => {
-        // Smooth loop back to stage 1 after 8 seconds of calm illuminated hold
-        setWireProgress(0);
-        setTimelinePhase('c1_spark');
-        setActiveInfoStep(1);
-      }, 8000);
-
-      return () => clearTimeout(replayTimer);
-    }
-  }, [timelinePhase, isPaused, userInspecting, isReducedMotion]);
-
-  // 5. Compute Stage Card Build Step
-  const getCardBuildStep = useCallback(
-    (step: number): CardBuildStep => {
-      if (isReducedMotion || timelinePhase === 'finale_settle') return 'completed';
-
-      const prefix = `c${step}_`;
-      if (timelinePhase.startsWith(prefix)) {
-        const sub = timelinePhase.replace(prefix, '') as CardBuildStep;
-        if (sub === ('done' as any)) return 'completed';
-        return sub;
+  // 3. Status Derivation for Each Card
+  const getCardStatus = useCallback(
+    (step: number): { status: CardStatus; typedCount: number } => {
+      if (isReducedMotion || phase === 'complete' || phase === 'finale_wave') {
+        return { status: 'completed', typedCount: 999 };
       }
 
-      // Check if this card's index is already finished
-      const phaseNum = parseInt(timelinePhase.slice(1, 2), 10);
-      if (!isNaN(phaseNum)) {
-        if (step < phaseNum) return 'completed';
-        if (step > phaseNum) return 'idle';
+      // Check current phase prefix
+      const currentBoxNum = parseInt(phase.slice(1, 2), 10);
+      const isBoxPhase = phase.startsWith('b');
+      const isWirePhase = phase.startsWith('w');
+
+      // Before this card starts
+      if (
+        phase === 'idle' ||
+        phase === 'lead_in' ||
+        (isBoxPhase && currentBoxNum < step) ||
+        (isWirePhase && currentBoxNum < step)
+      ) {
+        return { status: 'hidden', typedCount: 0 };
       }
 
-      if (timelinePhase === 'finale_wave') return 'completed';
-      return 'idle';
+      // This card is currently forming or typing
+      if (isBoxPhase && currentBoxNum === step) {
+        if (phase.endsWith('_blinking')) return { status: 'blinking', typedCount: 0 };
+        if (phase.endsWith('_forming')) return { status: 'forming', typedCount: 0 };
+        if (phase.endsWith('_typing')) return { status: 'typing', typedCount: typingCharIndex };
+        if (phase.endsWith('_pause')) return { status: 'completed', typedCount: 999 };
+      }
+
+      // Card is already finished and wire/later card is active
+      if (
+        (isWirePhase && currentBoxNum >= step) ||
+        (isBoxPhase && currentBoxNum > step)
+      ) {
+        return { status: 'completed', typedCount: 999 };
+      }
+
+      return { status: 'hidden', typedCount: 0 };
     },
-    [timelinePhase, isReducedMotion]
+    [phase, typingCharIndex, isReducedMotion]
   );
 
-  // 6. Compute Wire Build Step
-  const getWireBuildStep = useCallback(
-    (wireIdx: number): { step: WireBuildStep; progress: number; isIlluminated: boolean } => {
-      if (isReducedMotion || timelinePhase === 'finale_settle') {
-        return { step: 'completed', progress: 100, isIlluminated: true };
+  // 4. Status Derivation for Each Wire
+  const getWireStatus = useCallback(
+    (wireIdx: number): { status: WireStatus; progress: number; isArrivalPulse: boolean } => {
+      if (isReducedMotion || phase === 'complete' || phase === 'finale_wave') {
+        return { status: 'completed', progress: 100, isArrivalPulse: false };
       }
 
-      const prefix = `w${wireIdx}_`;
-      if (timelinePhase.startsWith(prefix)) {
-        const sub = timelinePhase.replace(prefix, '');
-        if (sub === 'emit') return { step: 'emit', progress: 0, isIlluminated: false };
-        if (sub === 'draw') return { step: 'draw', progress: wireProgress, isIlluminated: false };
-        if (sub === 'arrive') return { step: 'arrive', progress: 100, isIlluminated: true };
-        if (sub === 'done') return { step: 'completed', progress: 100, isIlluminated: true };
-      }
+      const isWirePhase = phase.startsWith('w');
+      const currentWireNum = isWirePhase ? parseInt(phase.slice(1, 2), 10) : null;
+      const isBoxPhase = phase.startsWith('b');
+      const currentBoxNum = isBoxPhase ? parseInt(phase.slice(1, 2), 10) : null;
 
-      // If later stage is active, wire is already completed and steadily glowing
-      const currentStageNum = parseInt(timelinePhase.slice(1, 2), 10);
-      if (!isNaN(currentStageNum)) {
-        if (timelinePhase.startsWith('c') && currentStageNum > wireIdx) {
-          return { step: 'completed', progress: 100, isIlluminated: true };
+      // Currently growing wire
+      if (isWirePhase && currentWireNum === wireIdx) {
+        if (phase.endsWith('_growing')) {
+          return { status: 'drawing', progress: wireProgress, isArrivalPulse: false };
         }
-        if (timelinePhase.startsWith('w') && currentStageNum > wireIdx) {
-          return { step: 'completed', progress: 100, isIlluminated: true };
+        if (phase.endsWith('_pulse')) {
+          return { status: 'completed', progress: 100, isArrivalPulse: true };
         }
       }
 
-      if (timelinePhase === 'finale_wave') {
-        return { step: 'completed', progress: 100, isIlluminated: true };
+      // Completed wire (later stage or wire active)
+      if (
+        (isWirePhase && currentWireNum !== null && currentWireNum > wireIdx) ||
+        (isBoxPhase && currentBoxNum !== null && currentBoxNum > wireIdx)
+      ) {
+        return { status: 'completed', progress: 100, isArrivalPulse: false };
       }
 
-      return { step: 'idle', progress: 0, isIlluminated: false };
+      return { status: 'hidden', progress: 0, isArrivalPulse: false };
     },
-    [timelinePhase, wireProgress, isReducedMotion]
+    [phase, wireProgress, isReducedMotion]
   );
 
-  // 7. User Action Handlers
+  // 5. User Control Handlers
   const handleTogglePause = () => {
     setIsPaused((prev) => !prev);
   };
@@ -382,51 +383,70 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
   const handleReplay = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+
     setIsPaused(false);
     setUserInspecting(false);
     setWireProgress(0);
-    setTimelinePhase('c1_spark');
-    setActiveInfoStep(1);
+    setTypingCharIndex(0);
+    setActiveInfoStep(null);
+    setPhase('lead_in');
   };
 
   const handleShowAll = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+
     setIsPaused(false);
-    setTimelinePhase('finale_settle');
+    setPhase('complete');
+    setActiveInfoStep(1);
     setWireProgress(100);
+    setTypingCharIndex(999);
   };
 
   const handleSelectStage = (step: number) => {
     setUserInspecting(true);
     setActiveInfoStep(step);
-    // Pause auto-progression while user inspects a specific stage
     setIsPaused(true);
   };
 
-  const activeStage = stages.find((s) => s.step === activeInfoStep) || stages[0]!;
-  const isFinaleWave = timelinePhase === 'finale_wave';
-  const isFinaleSettled = timelinePhase === 'finale_settle';
+  const activeStage = activeInfoStep
+    ? stages.find((s) => s.step === activeInfoStep) || stages[0]!
+    : null;
+
+  const isFinaleWave = phase === 'finale_wave';
+  const isFinaleSettled = phase === 'complete';
   const isCompleted = isFinaleSettled;
 
-  // Determine current constructing stage number for banner
-  let currentConstructingNum: number | null = null;
-  if (timelinePhase.startsWith('c')) {
-    const num = parseInt(timelinePhase.slice(1, 2), 10);
-    if (!isNaN(num)) currentConstructingNum = num;
+  // Status banner text
+  let statusText = 'Awaiting Viewport Entry...';
+  if (phase === 'lead_in') statusText = 'Initializing Cosmic Pipeline...';
+  else if (phase.startsWith('b') && phase.includes('forming')) {
+    statusText = `Constructing Box 0${phase.slice(1, 2)} Frame...`;
+  } else if (phase.startsWith('b') && phase.includes('typing')) {
+    statusText = `Typing Specifications Inside Box 0${phase.slice(1, 2)}...`;
+  } else if (phase.startsWith('w') && phase.includes('growing')) {
+    statusText = `Extending Circuit Conduit 0${phase.slice(1, 2)}...`;
+  } else if (isFinaleWave) {
+    statusText = 'Grand Illumination Wave Sweeping Pipeline...';
+  } else if (isCompleted) {
+    statusText = 'Complete Engineering Journey Online • All Stages Connected';
+  } else if (isPaused) {
+    statusText = 'Animation Paused • Press Resume to Continue';
   }
 
   return (
     <div ref={containerRef} className="space-y-8 sm:space-y-12">
       {/* ========================================================
-          A. DESKTOP & TABLET: HORIZONTAL AUTOMATED PIPELINE (≥1024px)
+          A. DESKTOP & TABLET: HORIZONTAL SEQUENTIAL PIPELINE (≥1024px)
           ======================================================== */}
       <div className="hidden lg:flex items-center justify-between gap-1 xl:gap-2 relative py-4">
         {stages.map((stage, idx) => {
-          const cardStep = getCardBuildStep(stage.step);
-          const wireInfo = idx < 4 ? getWireBuildStep(idx + 1) : null;
-          const isCurrentFocus = cardStep !== 'idle' && cardStep !== 'completed';
-          const isCardCompleted = cardStep === 'completed';
+          const { status, typedCount } = getCardStatus(stage.step);
+          const wireInfo = idx < 4 ? getWireStatus(idx + 1) : null;
+          const isCurrentFocus =
+            status === 'forming' || status === 'typing' || status === 'blinking';
           const isSelected = stage.step === activeInfoStep;
 
           return (
@@ -434,8 +454,8 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
               {/* Individual Stage Card */}
               <ProcessStageCard
                 stage={stage}
-                buildStep={cardStep}
-                isCompleted={isCardCompleted}
+                status={status}
+                typedCount={typedCount}
                 isCurrentFocus={isCurrentFocus}
                 isSelected={isSelected}
                 isFinaleWave={isFinaleWave}
@@ -444,13 +464,13 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
                 onClick={() => handleSelectStage(stage.step)}
               />
 
-              {/* Connecting Wire between Card N and Card N+1 */}
+              {/* Connecting Wire Component */}
               {wireInfo && (
                 <ProcessConnectingWire
                   wireIndex={idx + 1}
-                  buildStep={wireInfo.step}
+                  status={wireInfo.status}
                   progress={wireInfo.progress}
-                  isIlluminated={wireInfo.isIlluminated}
+                  isArrivalPulse={wireInfo.isArrivalPulse}
                   isFinaleWave={isFinaleWave}
                   isFinaleSettled={isFinaleSettled}
                   direction="horizontal"
@@ -466,10 +486,10 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
           ======================================================== */}
       <div className="lg:hidden flex flex-col gap-1 relative py-2">
         {stages.map((stage, idx) => {
-          const cardStep = getCardBuildStep(stage.step);
-          const wireInfo = idx < 4 ? getWireBuildStep(idx + 1) : null;
-          const isCurrentFocus = cardStep !== 'idle' && cardStep !== 'completed';
-          const isCardCompleted = cardStep === 'completed';
+          const { status, typedCount } = getCardStatus(stage.step);
+          const wireInfo = idx < 4 ? getWireStatus(idx + 1) : null;
+          const isCurrentFocus =
+            status === 'forming' || status === 'typing' || status === 'blinking';
           const isSelected = stage.step === activeInfoStep;
 
           return (
@@ -477,8 +497,8 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
               {/* Individual Compact Stage Card */}
               <ProcessStageCard
                 stage={stage}
-                buildStep={cardStep}
-                isCompleted={isCardCompleted}
+                status={status}
+                typedCount={typedCount}
                 isCurrentFocus={isCurrentFocus}
                 isSelected={isSelected}
                 isFinaleWave={isFinaleWave}
@@ -491,9 +511,9 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
               {wireInfo && (
                 <ProcessConnectingWire
                   wireIndex={idx + 1}
-                  buildStep={wireInfo.step}
+                  status={wireInfo.status}
                   progress={wireInfo.progress}
-                  isIlluminated={wireInfo.isIlluminated}
+                  isArrivalPulse={wireInfo.isArrivalPulse}
                   isFinaleWave={isFinaleWave}
                   isFinaleSettled={isFinaleSettled}
                   direction="vertical"
@@ -509,7 +529,7 @@ export const InteractiveProcessStages: React.FC<Props> = ({ stages }) => {
           ======================================================== */}
       <ProcessInfoPanel
         activeStage={activeStage}
-        currentConstructingStage={currentConstructingNum}
+        currentStatusText={statusText}
         isPaused={isPaused}
         isCompleted={isCompleted}
         onTogglePause={handleTogglePause}

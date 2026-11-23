@@ -14,7 +14,7 @@ export const processStages: ProcessStage[] = [
     id: 'discovery',
     title: 'Discovery',
     summary:
-      'We understand client requirements, business objectives, target audience, and technical expectations to establish a clear foundation.',
+      'Understanding your idea, your users and the problem to solve.',
     duration: 'Week 1',
     activities: [
       'Requirement gathering',
@@ -34,7 +34,7 @@ export const processStages: ProcessStage[] = [
     id: 'planning',
     title: 'Planning',
     summary:
-      'Architecting system blueprints, database models, technical feasibility, and implementation roadmap.',
+      'Choosing the right technology and mapping out how the product will be built.',
     duration: 'Weeks 1–2',
     activities: [
       'Technology selection',
