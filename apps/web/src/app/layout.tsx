@@ -52,7 +52,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col antialiased selection:bg-primary/20 selection:text-primary">
+      <body className="min-h-screen flex flex-col antialiased selection:bg-primary/20 selection:text-primary relative bg-bg text-text">
+        {/* Global Ambient Cosmic Background */}
+        <div className="fixed inset-0 pointer-events-none -z-50 overflow-hidden" aria-hidden="true">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(147,51,234,0.08),transparent_70%)]" />
+          <div className="absolute top-[40%] -right-40 w-96 h-96 bg-[radial-gradient(circle,rgba(56,189,248,0.04),transparent_70%)]" />
+          <div className="absolute bottom-[20%] -left-40 w-96 h-96 bg-[radial-gradient(circle,rgba(168,85,247,0.05),transparent_70%)]" />
+        </div>
         <SkipLink />
         <Header />
         <main id="main-content" className="flex-1 w-full">

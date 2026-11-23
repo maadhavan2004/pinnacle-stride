@@ -3,7 +3,7 @@ import { cn } from './utils';
 import { Loader2 } from 'lucide-react';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'link';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'link' | 'cosmic';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
@@ -34,8 +34,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       // Vercel / Linear inspired adaptive primary
       primary:
         'bg-text text-bg hover:opacity-90 shadow-sm border border-transparent font-medium',
+      cosmic:
+        'bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-[0_0_15px_rgba(139,92,246,0.35)] border border-violet-400/30 font-medium',
       secondary:
-        'bg-surface hover:bg-surface-hover text-text border border-border shadow-xs',
+        'bg-surface hover:bg-surface-hover text-text border border-border shadow-xs hover:border-primary/40',
       outline:
         'bg-transparent border border-border text-text hover:bg-surface-hover',
       ghost:

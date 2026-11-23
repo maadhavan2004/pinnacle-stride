@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { HeroPathAnimation } from '@/components/HeroPathAnimation';
+import { InteractiveProcessStages } from '@/components/InteractiveProcessStages';
 import { Container, Button, Card, Badge, SectionHeading } from '@ps/ui';
 import {
   servicesData,
@@ -144,74 +145,68 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* 3. FEATURED PRODUCTS (SOPHISTICATED SaaS CARDS) */}
+      {/* 3. PRODUCT IN DEVELOPMENT */}
       <section className="relative">
         <Container>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-3">
             <div>
-              <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-semibold">
-                In-House Software
+              <span className="text-[11px] font-mono uppercase tracking-wider text-accent font-semibold">
+                In-House Engineering
               </span>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-text mt-1">
-                Featured Software Products
+                Software In Development
               </h2>
             </div>
             <Link href="/products" className="text-xs font-medium text-text-muted hover:text-text flex items-center gap-1 transition-colors">
-              <span>View all products</span>
+              <span>View product overview</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {featuredProducts.map((prod) => (
-              <Card key={prod.slug} className="flex flex-col justify-between p-6">
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-4">
-                    <Badge variant={prod.productStatus === 'LIVE' ? 'status-green' : 'status-amber'}>
-                      {prod.productStatus === 'IN_DEVELOPMENT'
-                        ? 'In Development'
-                        : prod.productStatus === 'COMING_SOON'
-                        ? 'Coming Soon'
-                        : prod.productStatus}
-                    </Badge>
-                    <span className="text-[10px] font-mono text-text-subtle">
-                      Independent
-                    </span>
-                  </div>
-
-                  <h3 className="text-sm font-semibold text-text mb-1.5">
-                    {prod.name}
-                  </h3>
-                  <p className="text-xs text-primary font-medium mb-3">
-                    {prod.tagline}
-                  </p>
-                  <p className="text-xs text-text-muted leading-relaxed mb-5">
-                    {prod.problem}
-                  </p>
-
-                  <div className="space-y-1.5 mb-5 pt-3 border-t border-border/60">
-                    <div className="text-[10px] font-mono uppercase tracking-wider text-text-subtle">
-                      Core Highlights:
+          <div className="rounded-2xl border border-primary/25 bg-surface/80 backdrop-blur-md p-6 sm:p-8 lg:p-10 shadow-[0_0_25px_-5px_rgba(147,51,234,0.1)]">
+            <div className="flex flex-col lg:flex-row gap-8 items-start justify-between">
+              <div className="lg:max-w-2xl space-y-4">
+                <div className="text-xs font-mono text-accent font-semibold uppercase tracking-wider">
+                  Flagship Knowledge Platform
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-text">
+                  {featuredProducts[0]?.name || 'StrideFlow Knowledge Engine'}
+                </h3>
+                <p className="text-xs sm:text-sm font-medium text-accent">
+                  {featuredProducts[0]?.tagline}
+                </p>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  {featuredProducts[0]?.problem}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                  {featuredProducts[0]?.features.slice(0, 4).map((f, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-text-muted">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <span>{f}</span>
                     </div>
-                    {prod.features.slice(0, 3).map((f, i) => (
-                      <div key={i} className="flex items-start gap-2 text-xs text-text-muted">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                        <span>{f}</span>
-                      </div>
-                    ))}
-                  </div>
+                  ))}
                 </div>
+              </div>
 
-                <div className="pt-3 border-t border-border flex items-center justify-between text-xs">
-                  <span className="text-[11px] font-mono text-text-subtle">
-                    Status: {prod.productStatus.replace('_', ' ')}
-                  </span>
-                  <Link href="/products" className="font-medium text-text hover:text-primary transition-colors">
-                    Learn more →
-                  </Link>
+              {/* Right side: Status and Action */}
+              <div className="w-full lg:w-72 space-y-4 p-5 rounded-xl bg-bg-subtle/80 border border-border shrink-0">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-text-muted font-medium">Status:</span>
+                  <Badge variant="status-amber" size="sm">
+                    In Development
+                  </Badge>
                 </div>
-              </Card>
-            ))}
+                <div className="text-[11px] font-mono text-text-subtle border-t border-border pt-3">
+                  Target users: Technical teams & software architects
+                </div>
+                <Link href="/products" className="w-full block pt-1">
+                  <Button size="sm" variant="cosmic" className="w-full text-xs">
+                    Explore Product Details
+                    <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </Container>
       </section>
@@ -235,52 +230,50 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {featuredProjects.map((project) => (
-              <Card key={project.slug} className="flex flex-col justify-between p-6">
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <Badge variant="portfolio">
-                      {project.projectType === 'INTERNAL_PORTFOLIO'
-                        ? 'Internal Project'
-                        : project.projectType === 'INDEPENDENT_PRODUCT'
-                        ? 'Product'
-                        : 'Client Work'}
-                    </Badge>
-                    <span className="text-[10px] font-mono text-text-subtle">
-                      {project.category.replace('_', ' ')}
-                    </span>
-                  </div>
-
-                  <h3 className="text-sm font-semibold text-text mb-2">
-                    {project.title}
-                  </h3>
-                  <p className="text-xs text-text-muted leading-relaxed mb-4">
-                    {project.summary}
-                  </p>
-
-                  <div className="flex flex-wrap gap-1 mb-5">
-                    {project.technologies.slice(0, 4).map((tech) => (
-                      <span
-                        key={tech}
-                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface border border-border text-text-muted"
-                      >
-                        {tech}
+            {featuredProjects
+              .filter((p) => p.slug !== 'internal-knowledge-rag-assistant')
+              .map((project) => (
+                <Card key={project.slug} className="flex flex-col justify-between p-6">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/10 text-accent border border-primary/20">
+                        {project.category.replace('_', ' ')}
                       </span>
-                    ))}
-                  </div>
-                </div>
+                      <span className="text-[10px] font-mono text-text-subtle">
+                        Engineering Spec
+                      </span>
+                    </div>
 
-                <div className="pt-3 border-t border-border">
-                  <Link
-                    href={`/projects/${project.slug}`}
-                    className="inline-flex items-center text-xs font-medium text-text hover:text-primary transition-colors"
-                  >
-                    <span>Read Case Study</span>
-                    <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                  </Link>
-                </div>
-              </Card>
-            ))}
+                    <h3 className="text-sm font-semibold text-text mb-2">
+                      {project.title}
+                    </h3>
+                    <p className="text-xs text-text-muted leading-relaxed mb-4">
+                      {project.summary}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1 mb-5">
+                      {project.technologies.slice(0, 4).map((tech) => (
+                        <span
+                          key={tech}
+                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface border border-border text-text-muted"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-border">
+                    <Link
+                      href={`/projects/${project.slug}`}
+                      className="inline-flex items-center text-xs font-medium text-text hover:text-primary transition-colors"
+                    >
+                      <span>Read Case Study</span>
+                      <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    </Link>
+                  </div>
+                </Card>
+              ))}
           </div>
         </Container>
       </section>
@@ -327,48 +320,21 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* 6. HOW WE WORK (5-STAGE STEPPER) */}
-      <section className="relative bg-bg-subtle/50 py-14 sm:py-16 border-y border-border">
+      {/* 6. HOW WE WORK (INTERACTIVE 5-STAGE PROCESS) */}
+      <section className="relative bg-bg-subtle/50 py-16 sm:py-20 border-y border-border">
         <Container>
           <SectionHeading
             eyebrow="Methodology"
-            title="A Transparent Five-Stage Process"
-            description="From discovery to maintenance, our structured stages guarantee accountability and zero surprises."
+            title="An Interactive Five-Stage Process"
+            description="From discovery to long-term operations, click any stage to inspect the timelines, activities, and tangible outputs."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3.5">
-            {processStages.map((stage) => (
-              <div
-                key={stage.id}
-                className="p-4 rounded-xl bg-surface border border-border flex flex-col justify-between space-y-3"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-mono font-bold text-primary">
-                      0{stage.step}
-                    </span>
-                    <span className="text-[10px] font-mono text-text-subtle">
-                      {stage.duration}
-                    </span>
-                  </div>
-                  <h3 className="font-semibold text-xs text-text mb-1.5">
-                    {stage.title}
-                  </h3>
-                  <p className="text-[11px] text-text-muted leading-relaxed">
-                    {stage.summary}
-                  </p>
-                </div>
-                <div className="pt-2 border-t border-border/50 text-[10px] font-mono text-text-subtle truncate">
-                  {stage.outputs[0]}
-                </div>
-              </div>
-            ))}
-          </div>
+          <InteractiveProcessStages stages={processStages} />
 
-          <div className="mt-8 text-center">
+          <div className="mt-10 text-center">
             <Link href="/how-we-work">
               <Button size="sm" variant="secondary" className="text-xs">
-                Detailed Delivery Model & Maintenance Options
+                Detailed Delivery Model & Hosting Freedom
                 <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>
             </Link>

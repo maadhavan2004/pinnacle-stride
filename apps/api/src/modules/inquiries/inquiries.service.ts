@@ -38,11 +38,20 @@ export class InquiriesService {
     console.log(`From:     ${input.fullName} <${input.email}>`);
     console.log(`Company:  ${input.company || 'Not specified'}`);
     console.log(`Service:  ${input.serviceType}`);
+    if (input.otherServiceDetails) {
+      console.log(`Custom Tech: ${input.otherServiceDetails}`);
+    }
     console.log(`Budget:   ${input.budgetRange}`);
     console.log(`Timeline: ${input.timeline}`);
     console.log(`Message:  ${input.message}`);
     console.log(`Time:     ${new Date().toLocaleString()}`);
     console.log(`=====================================================\n`);
+
+    // Format message to ensure custom technology descriptions are seamlessly preserved
+    const messageToPersist =
+      input.otherServiceDetails && input.otherServiceDetails.trim().length > 0
+        ? `[Custom Technology / Solution]: ${input.otherServiceDetails.trim()}\n\n[Requirements]: ${input.message}`
+        : input.message;
 
     // 3. Hash IP address for privacy-conscious consent compliance
     const ipHash = crypto.createHash('sha256').update(ip || 'unknown').digest('hex');
@@ -56,12 +65,15 @@ export class InquiriesService {
             email: input.email,
             company: input.company || null,
             serviceType: input.serviceType,
-            budget: input.budgetRange,
+            budget: input.budgetRange as any,
             timeline: input.timeline,
-            message: input.message,
+            message: messageToPersist,
             status: 'NEW',
             sourcePage: input.sourcePage || null,
-            utm: input.utm || {},
+            utm: {
+              ...(input.utm || {}),
+              ...(input.otherServiceDetails ? { otherServiceDetails: input.otherServiceDetails } : {}),
+            },
             ipHash,
             userAgent: userAgent || null,
             consentRecord: {
@@ -94,7 +106,7 @@ export class InquiriesService {
       serviceType: input.serviceType,
       budget: input.budgetRange,
       timeline: input.timeline,
-      message: input.message,
+      message: messageToPersist,
       status: 'NEW',
       createdAt: new Date(),
       notes: [],

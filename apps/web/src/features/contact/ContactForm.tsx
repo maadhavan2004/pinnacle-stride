@@ -2,13 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import {
-  Button,
-  Input,
-  Textarea,
-  FormField,
-  Badge,
-} from '@ps/ui';
+import { Button, Input, Textarea, FormField } from '@ps/ui';
 import {
   inquirySchema,
   InquiryInput,
@@ -22,7 +16,7 @@ import {
   TimelineOptionEnum,
   TimelineOptionLabels,
 } from '@ps/schemas';
-import { CheckCircle2, AlertCircle, ArrowRight, ShieldCheck, Send } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ArrowRight, ShieldCheck, Send, Sparkles, HelpCircle } from 'lucide-react';
 
 export const ContactForm: React.FC = () => {
   const searchParams = useSearchParams();
@@ -34,12 +28,13 @@ export const ContactForm: React.FC = () => {
     company: '',
     serviceType: preselectedService && ServiceTypeEnum.options.includes(preselectedService)
       ? preselectedService
-      : 'BUSINESS_WEBSITE',
-    budgetRange: 'RANGE_25K_75K',
-    timeline: 'ONE_TO_THREE_MONTHS',
+      : undefined,
+    otherServiceDetails: '',
+    budgetRange: undefined,
+    timeline: 'FLEXIBLE',
     message: '',
     consent: false,
-    website: '', // Honeypot
+    website: '', // Honeypot field
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -64,21 +59,34 @@ export const ContactForm: React.FC = () => {
     }
   };
 
+  const isOthersSelected = formData.serviceType === 'OTHER_CONSULTATION';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError(null);
 
+    // Manual check for initial neutral placeholders
+    const newErrors: Record<string, string> = {};
+    if (!formData.serviceType) {
+      newErrors.serviceType = 'Please select a service category';
+    }
+    if (!formData.budgetRange) {
+      newErrors.budgetRange = 'Please select your indicative budget';
+    }
+
     const result = inquirySchema.safeParse(formData);
     if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
         const fieldName = issue.path[0]?.toString();
-        if (fieldName && !fieldErrors[fieldName]) {
-          fieldErrors[fieldName] = issue.message;
+        if (fieldName && !newErrors[fieldName]) {
+          newErrors[fieldName] = issue.message;
         }
       });
-      setErrors(fieldErrors);
-      const firstField = Object.keys(fieldErrors)[0];
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      const firstField = Object.keys(newErrors)[0];
       if (firstField) {
         const el = document.querySelector(`[name="${firstField}"]`) as HTMLElement;
         el?.focus();
@@ -120,21 +128,22 @@ export const ContactForm: React.FC = () => {
 
   if (isSuccess) {
     return (
-      <div className="p-8 sm:p-10 rounded-xl bg-surface border border-border text-center space-y-4 shadow-xs animate-in fade-in duration-200">
-        <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
-          <CheckCircle2 className="w-6 h-6" />
+      <div className="p-8 sm:p-12 rounded-2xl bg-surface/90 backdrop-blur-md border border-primary/30 text-center space-y-5 shadow-[0_0_25px_rgba(147,51,234,0.15)] animate-in fade-in zoom-in-95 duration-200">
+        <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex items-center justify-center mx-auto shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+          <CheckCircle2 className="w-7 h-7" />
         </div>
-        <div className="space-y-1.5">
-          <h2 className="text-xl font-bold text-text">
-            Requirements Received
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-text">
+            Inquiry Successfully Received
           </h2>
-          <p className="text-xs text-text-muted max-w-sm mx-auto leading-relaxed">
-            We have securely logged your submission. A member of our engineering team will review your specifications and reply via email within <span className="font-semibold text-text">2 business days</span>.
+          <p className="text-xs sm:text-sm text-text-muted max-w-md mx-auto leading-relaxed">
+            Thank you for reaching out. We have securely logged your project requirements. A senior engineer will review your specifications and reply via email within <span className="font-semibold text-text">2 business days</span>.
           </p>
         </div>
 
-        <div className="p-3 rounded-lg bg-bg-subtle border border-border text-[11px] font-mono text-text-muted max-w-xs mx-auto">
-          Service: <span className="font-semibold text-text">{formData.serviceType}</span>
+        <div className="p-4 rounded-xl bg-bg-subtle/80 border border-border text-xs font-mono text-text-muted max-w-sm mx-auto space-y-1 text-left">
+          <div>Service: <span className="text-text font-semibold">{formData.serviceType ? ServiceTypeLabels[formData.serviceType] : 'Selected Service'}</span></div>
+          <div>Budget: <span className="text-accent font-semibold">{formData.budgetRange ? BudgetRangeLabels[formData.budgetRange] : 'Indicative'}</span></div>
         </div>
 
         <div className="pt-2">
@@ -147,16 +156,17 @@ export const ContactForm: React.FC = () => {
                 fullName: '',
                 email: '',
                 company: '',
-                serviceType: 'BUSINESS_WEBSITE',
-                budgetRange: 'RANGE_25K_75K',
-                timeline: 'ONE_TO_THREE_MONTHS',
+                serviceType: undefined,
+                otherServiceDetails: '',
+                budgetRange: undefined,
+                timeline: 'FLEXIBLE',
                 message: '',
                 consent: false,
                 website: '',
               });
             }}
           >
-            Submit Another Inquiry
+            Submit Another Project Inquiry
           </Button>
         </div>
       </div>
@@ -167,16 +177,16 @@ export const ContactForm: React.FC = () => {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs space-y-6"
+      className="p-6 sm:p-10 rounded-2xl bg-surface/85 backdrop-blur-md border border-border/90 shadow-sm space-y-6"
     >
       {apiError && (
-        <div role="alert" className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs flex items-center gap-2">
+        <div role="alert" className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{apiError}</span>
         </div>
       )}
 
-      {/* Honeypot field (hidden from view, bot trap per FR-77) */}
+      {/* Honeypot field (hidden from view, bot trap) */}
       <div className="hidden" aria-hidden="true">
         <label htmlFor="website-hp">Website</label>
         <input
@@ -193,7 +203,7 @@ export const ContactForm: React.FC = () => {
       {/* 1. Full Name & Email */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
-          label="Full Name"
+          label="Your Full Name"
           required
           error={errors.fullName}
         >
@@ -212,7 +222,7 @@ export const ContactForm: React.FC = () => {
         </FormField>
 
         <FormField
-          label="Business Email"
+          label="Email Address"
           required
           error={errors.email}
         >
@@ -234,14 +244,14 @@ export const ContactForm: React.FC = () => {
 
       {/* 2. Company Name */}
       <FormField
-        label="Company / Startup (Optional)"
+        label="Company or Project Name (Optional)"
         error={errors.company}
       >
         {(id, describedBy) => (
           <Input
             id={id}
             name="company"
-            placeholder="e.g. Acme Labs"
+            placeholder="e.g. Acme Tech Labs"
             value={formData.company || ''}
             onChange={(e) => handleChange('company', e.target.value)}
             aria-describedby={describedBy}
@@ -249,67 +259,120 @@ export const ContactForm: React.FC = () => {
         )}
       </FormField>
 
-      {/* 3. Service Needed (Minimalist Radio Tiles) */}
-      <div className="space-y-2">
-        <label className="text-xs font-medium text-text-muted flex items-center gap-1 select-none">
-          Service Scope <span className="text-red-500 font-mono">*</span>
+      {/* 3. Service Scope Integrated Dropdown (Replaces large radio buttons) */}
+      <div className="space-y-1.5">
+        <label htmlFor="serviceType-select" className="text-xs font-medium text-text flex items-center justify-between">
+          <span className="flex items-center gap-1">
+            Service Scope <span className="text-red-500 font-mono">*</span>
+          </span>
+          <span className="text-[10px] font-mono text-text-subtle">Integrated Category</span>
         </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {ServiceTypeEnum.options.map((serviceKey) => {
-            const isSelected = formData.serviceType === serviceKey;
-            return (
-              <label
-                key={serviceKey}
-                className={`p-2.5 rounded-lg border text-xs cursor-pointer transition-colors flex items-center gap-2 ${
-                  isSelected
-                    ? 'border-primary/80 bg-surface text-text font-medium ring-1 ring-primary/40'
-                    : 'border-border bg-bg-subtle/50 text-text-muted hover:border-text-subtle/40'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="serviceType"
-                  value={serviceKey}
-                  checked={isSelected}
-                  onChange={() => handleChange('serviceType', serviceKey)}
-                  className="accent-primary"
-                />
-                <span className="truncate">{ServiceTypeLabels[serviceKey]}</span>
-              </label>
-            );
-          })}
-        </div>
+        <select
+          id="serviceType-select"
+          name="serviceType"
+          value={formData.serviceType || ''}
+          onChange={(e) => handleChange('serviceType', e.target.value as ServiceType)}
+          className={`w-full h-10 px-3 rounded-xl text-xs bg-surface text-text border transition-colors focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer font-sans ${
+            errors.serviceType ? 'border-red-500 ring-1 ring-red-500/30' : 'border-border'
+          }`}
+          required
+        >
+          <option value="" disabled>
+            Select service category...
+          </option>
+          {ServiceTypeEnum.options.map((serviceKey) => (
+            <option key={serviceKey} value={serviceKey}>
+              {ServiceTypeLabels[serviceKey]}
+            </option>
+          ))}
+        </select>
+        {errors.serviceType && (
+          <p role="alert" className="text-[11px] font-medium text-red-400">
+            {errors.serviceType}
+          </p>
+        )}
       </div>
 
-      {/* 4. Budget Range & Expected Timeline */}
+      {/* 3B. Dynamic "Others" Explanation Field */}
+      {isOthersSelected && (
+        <div className="p-4 rounded-xl bg-primary/5 border border-primary/25 space-y-2 animate-in fade-in duration-200">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-text">
+            <Sparkles className="w-3.5 h-3.5 text-accent" />
+            <label htmlFor="otherServiceDetails">
+              Tell us about the technology or solution you have in mind <span className="text-red-500 font-mono">*</span>
+            </label>
+          </div>
+          <p className="text-[11px] text-text-muted leading-relaxed">
+            Describe emerging technologies, platforms, or custom architectures you want us to explore, build, or implement—even if they are not listed in our standard offerings.
+          </p>
+          <Textarea
+            id="otherServiceDetails"
+            name="otherServiceDetails"
+            rows={3}
+            placeholder="Describe the technology, platform, or functionality you would like us to explore and implement..."
+            value={formData.otherServiceDetails || ''}
+            onChange={(e) => handleChange('otherServiceDetails', e.target.value)}
+            error={!!errors.otherServiceDetails}
+            required={isOthersSelected}
+          />
+          {errors.otherServiceDetails && (
+            <p role="alert" className="text-[11px] font-medium text-red-400">
+              {errors.otherServiceDetails}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* 4. Indicative Budget Dropdown (Starting at ₹1,000–₹5,000) & Target Timeline */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Indicative Budget Dropdown */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-text-muted">
-            Indicative Budget
+          <label htmlFor="budgetRange-select" className="text-xs font-medium text-text flex items-center justify-between">
+            <span className="flex items-center gap-1">
+              Indicative Budget <span className="text-red-500 font-mono">*</span>
+            </span>
           </label>
           <select
+            id="budgetRange-select"
             name="budgetRange"
-            value={formData.budgetRange}
-            onChange={(e) => handleChange('budgetRange', e.target.value)}
-            className="w-full h-9 px-3 rounded-lg text-xs bg-surface text-text border border-border focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer font-sans"
+            value={formData.budgetRange || ''}
+            onChange={(e) => handleChange('budgetRange', e.target.value as BudgetRange)}
+            className={`w-full h-10 px-3 rounded-xl text-xs bg-surface text-text border transition-colors focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer font-sans ${
+              errors.budgetRange ? 'border-red-500 ring-1 ring-red-500/30' : 'border-border'
+            }`}
+            required
           >
-            {BudgetRangeEnum.options.map((b) => (
-              <option key={b} value={b}>
-                {BudgetRangeLabels[b]}
-              </option>
-            ))}
+            <option value="" disabled>
+              Select your indicative budget...
+            </option>
+            <option value="RANGE_1K_5K">₹1,000 – ₹5,000</option>
+            <option value="RANGE_5K_10K">₹5,001 – ₹10,000</option>
+            <option value="RANGE_10K_25K">₹10,001 – ₹25,000</option>
+            <option value="RANGE_25K_50K">₹25,001 – ₹50,000</option>
+            <option value="RANGE_50K_1L">₹50,001 – ₹1,00,000</option>
+            <option value="RANGE_1L_2_5L">₹1,00,001 – ₹2,50,000</option>
+            <option value="RANGE_2_5L_5L">₹2,50,001 – ₹5,00,000</option>
+            <option value="ABOVE_5L">Above ₹5,00,000</option>
+            <option value="NOT_SURE">Not sure yet / Need guidance</option>
           </select>
+          {errors.budgetRange && (
+            <p role="alert" className="text-[11px] font-medium text-red-400">
+              {errors.budgetRange}
+            </p>
+          )}
         </div>
 
+        {/* Target Timeline Dropdown */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-text-muted">
+          <label htmlFor="timeline-select" className="text-xs font-medium text-text">
             Target Timeline
           </label>
           <select
+            id="timeline-select"
             name="timeline"
-            value={formData.timeline}
-            onChange={(e) => handleChange('timeline', e.target.value)}
-            className="w-full h-9 px-3 rounded-lg text-xs bg-surface text-text border border-border focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer font-sans"
+            value={formData.timeline || 'FLEXIBLE'}
+            onChange={(e) => handleChange('timeline', e.target.value as TimelineOption)}
+            className="w-full h-10 px-3 rounded-xl text-xs bg-surface text-text border border-border focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer font-sans"
           >
             {TimelineOptionEnum.options.map((t) => (
               <option key={t} value={t}>
@@ -322,10 +385,10 @@ export const ContactForm: React.FC = () => {
 
       {/* 5. Requirements Description */}
       <FormField
-        label="Project Objectives & Scope"
+        label="Project Requirements & Objectives"
         required
         error={errors.message}
-        helperText={`${(formData.message || '').length}/5000 characters`}
+        helperText={`${(formData.message || '').length}/5000 characters (minimum 20 characters)`}
       >
         {(id, describedBy) => (
           <Textarea
@@ -343,25 +406,25 @@ export const ContactForm: React.FC = () => {
       </FormField>
 
       {/* 6. Privacy Consent Checkbox */}
-      <div className="space-y-1">
+      <div className="space-y-1 pt-1">
         <label className="flex items-start gap-2.5 cursor-pointer">
           <input
             type="checkbox"
             name="consent"
             checked={formData.consent || false}
             onChange={(e) => handleChange('consent', e.target.checked)}
-            className="w-3.5 h-3.5 mt-0.5 rounded accent-primary focus:ring-primary"
+            className="w-4 h-4 mt-0.5 rounded accent-primary focus:ring-primary"
             required
           />
           <span className="text-[11px] text-text-muted leading-relaxed">
-            I agree to the processing of my contact information to receive a project proposal in accordance with PinnacleStride's{' '}
+            I agree to the processing of my contact information to receive an honest project proposal in accordance with PinnacleStride's{' '}
             <a href="/privacy" target="_blank" className="text-text underline hover:text-primary">
               Privacy Policy
             </a>.
           </span>
         </label>
         {errors.consent && (
-          <p role="alert" className="text-[11px] font-medium text-danger pl-6">
+          <p role="alert" className="text-[11px] font-medium text-red-400 pl-6">
             {errors.consent}
           </p>
         )}
@@ -372,11 +435,11 @@ export const ContactForm: React.FC = () => {
         <Button
           type="submit"
           size="md"
-          variant="primary"
+          variant="cosmic"
           isLoading={isSubmitting}
-          className="w-full"
+          className="w-full text-xs"
         >
-          Submit Requirements
+          Submit Project Inquiry
           <Send className="w-3.5 h-3.5 ml-1.5" />
         </Button>
       </div>

@@ -30,11 +30,19 @@ enum ServiceType {
 }
 
 enum BudgetRange {
+  RANGE_1K_5K
+  RANGE_5K_10K
+  RANGE_10K_25K
+  RANGE_25K_50K
+  RANGE_50K_1L
+  RANGE_1L_2_5L
+  RANGE_2_5L_5L
+  ABOVE_5L
+  NOT_SURE
   UNDER_25K
   RANGE_25K_75K
   RANGE_75K_2L
   ABOVE_2L
-  NOT_SURE
 }
 
 enum TimelineOption {

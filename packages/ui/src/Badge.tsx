@@ -7,6 +7,7 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
     | 'product'
     | 'portfolio'
     | 'client'
+    | 'cosmic'
     | 'status-green'
     | 'status-amber'
     | 'status-blue';
@@ -26,9 +27,10 @@ export const Badge: React.FC<BadgeProps> = ({
 
   const dotColors = {
     default: 'bg-text-subtle',
-    product: 'bg-indigo-400',
+    product: 'bg-purple-400 shadow-[0_0_6px_rgba(168,85,247,0.8)]',
     portfolio: 'bg-emerald-400',
     client: 'bg-sky-400',
+    cosmic: 'bg-violet-400 shadow-[0_0_6px_rgba(139,92,246,0.8)]',
     'status-green': 'bg-emerald-400',
     'status-amber': 'bg-amber-400',
     'status-blue': 'bg-blue-400',
@@ -38,11 +40,13 @@ export const Badge: React.FC<BadgeProps> = ({
     default:
       'bg-surface-hover/80 text-text-muted border-border',
     product:
-      'bg-indigo-500/10 text-indigo-400 dark:text-indigo-300 border-indigo-500/20',
+      'bg-purple-500/10 text-purple-400 dark:text-purple-300 border-purple-500/25',
     portfolio:
       'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/20',
     client:
       'bg-sky-500/10 text-sky-500 dark:text-sky-400 border-sky-500/20',
+    cosmic:
+      'bg-violet-500/10 text-violet-400 dark:text-violet-300 border-violet-500/30',
     'status-green':
       'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/20',
     'status-amber':
