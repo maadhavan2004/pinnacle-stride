@@ -38,11 +38,11 @@ export default function HowWeWorkPage() {
             <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-text leading-[1.15]">
               How We Work: <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-300 to-sky-400">
-                Interactive Five-Stage Process.
+                The Automated Project Journey.
               </span>
             </h1>
             <p className="text-xs sm:text-base text-text-muted leading-relaxed max-w-xl mx-auto pt-1">
-              Select any stage below to inspect the week allocation, activities performed, and tangible deliverables. We eliminate guesswork with verifiable milestones.
+              Watch how we engineer concepts into production-ready digital solutions. Follow the sequential construction from Discovery to Launch with verifiable milestone accountability.
             </p>
           </div>
         </Container>

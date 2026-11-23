@@ -320,13 +320,13 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* 6. HOW WE WORK (INTERACTIVE 5-STAGE PROCESS) */}
+      {/* 6. HOW WE WORK (AUTOMATED 5-STAGE PROCESS JOURNEY) */}
       <section className="relative bg-bg-subtle/50 py-16 sm:py-20 border-y border-border">
         <Container>
           <SectionHeading
             eyebrow="Methodology"
-            title="An Interactive Five-Stage Process"
-            description="From discovery to long-term operations, click any stage to inspect the timelines, activities, and tangible outputs."
+            title="The Automated Project Journey"
+            description="From discovery to long-term operations, watch how our sequential five-stage pipeline transforms concepts into production realities."
           />
 
           <InteractiveProcessStages stages={processStages} />
