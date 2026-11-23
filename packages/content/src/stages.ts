@@ -53,8 +53,7 @@ export const processStages: ProcessStage[] = [
     step: 3,
     id: 'development',
     title: 'Development',
-    summary:
-      'Turning ideas and plans into functional digital solutions with clean full-stack TypeScript.',
+    summary: 'Turning ideas and plans into functional digital solutions.',
     duration: 'Weeks 3–6',
     activities: [
       'Frontend development',
@@ -74,7 +73,7 @@ export const processStages: ProcessStage[] = [
     id: 'testing',
     title: 'Testing',
     summary:
-      'Verifying functionality, improving reliability, and refining the solution across all devices.',
+      'Verifying functionality, improving reliability and refining the solution.',
     duration: 'Weeks 6–7',
     activities: [
       'Functional testing',
@@ -93,8 +92,7 @@ export const processStages: ProcessStage[] = [
     step: 5,
     id: 'launch',
     title: 'Launch',
-    summary:
-      'Delivering the completed solution, production cutover, and taking your idea live.',
+    summary: 'Delivering the completed solution and taking your idea live.',
     duration: 'Week 8+ & Ongoing',
     activities: [
       'Final review',
